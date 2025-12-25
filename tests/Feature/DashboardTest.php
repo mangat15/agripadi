@@ -9,7 +9,8 @@ test('guests are redirected to the login page', function () {
 });
 
 test('authenticated users can visit the dashboard', function () {
-    $this->actingAs($user = User::factory()->create());
+    $user = User::factory()->create(['role' => 0]); // 0 = farmer
 
-    $this->get(route('dashboard'))->assertOk();
+    $this->actingAs($user)->get(route('dashboard'))
+        ->assertRedirect(route('farmer.dashboard'));
 });

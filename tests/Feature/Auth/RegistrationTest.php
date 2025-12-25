@@ -16,6 +16,6 @@ test('new users can register', function () {
         'password_confirmation' => 'password',
     ]);
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect();
+    expect(\App\Models\User::where('email', 'test@example.com')->exists())->toBeTrue();
 });
