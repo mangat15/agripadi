@@ -20,7 +20,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Admin',
                 'email' => 'admin@gmail.com',
                 'password' => Hash::make('123456789'),
-                'role' => 'admin',
+                'role' => 1,
                 'email_verified_at' => now(),
             ]
         );
@@ -32,7 +32,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Demo Farmer',
                 'email' => 'farmer@gmail.com',
                 'password' => Hash::make('123456789'),
-                'role' => 'farmer',
+                'role' => 0,
                 'email_verified_at' => now(),
             ]
         );
