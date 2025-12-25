@@ -1,4 +1,3 @@
-import { Link } from '@inertiajs/react';
 import { Check } from 'lucide-react';
 import { type PropsWithChildren } from 'react';
 

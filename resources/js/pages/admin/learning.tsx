@@ -60,7 +60,7 @@ export default function AdminLearningMaterial({ materials, categories }: Props) 
     const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
     const [newCategory, setNewCategory] = useState('');
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, processing, errors, reset } = useForm({
         title: '',
         description: '',
         type: 'video' as 'pdf' | 'video',
@@ -110,13 +110,6 @@ export default function AdminLearningMaterial({ materials, categories }: Props) 
         if (confirm('Adakah anda pasti mahu memadam bahan pembelajaran ini?')) {
             router.delete(`/admin/learning/${id}`);
         }
-    };
-
-    const getYouTubeEmbedUrl = (url: string) => {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-        const match = url.match(regExp);
-        const videoId = (match && match[2].length === 11) ? match[2] : null;
-        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
     };
 
     return (

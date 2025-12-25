@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useForm, router } from '@inertiajs/react';
+import { useState, useEffect, useCallback } from 'react';
+import { useForm } from '@inertiajs/react';
 import FarmerSidebarLayout from '@/layouts/app/farmer-sidebar-layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -43,6 +43,17 @@ export default function QuizTake({ quiz }: Props) {
 
     const { post, processing } = useForm();
 
+    const handleAutoSubmit = useCallback(() => {
+        if (processing) return;
+
+        post(`/farmer/quiz/${quiz.id}/submit`, {
+            data: {
+                answers: answers,
+                started_at: startedAt,
+            },
+        });
+    }, [post, processing, quiz.id, answers, startedAt]);
+
     // Timer countdown
     useEffect(() => {
         if (timeLeft === null || timeLeft <= 0) return;
@@ -58,7 +69,7 @@ export default function QuizTake({ quiz }: Props) {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [timeLeft]);
+    }, [timeLeft, handleAutoSubmit]);
 
     const formatTime = (seconds: number): string => {
         const mins = Math.floor(seconds / 60);
@@ -83,17 +94,6 @@ export default function QuizTake({ quiz }: Props) {
         if (currentQuestion < quiz.questions.length - 1) {
             setCurrentQuestion(currentQuestion + 1);
         }
-    };
-
-    const handleAutoSubmit = () => {
-        if (processing) return;
-
-        post(`/farmer/quiz/${quiz.id}/submit`, {
-            data: {
-                answers: answers,
-                started_at: startedAt,
-            },
-        });
     };
 
     const handleSubmit = () => {

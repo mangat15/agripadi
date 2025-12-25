@@ -1,13 +1,11 @@
-import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { usePage, Link } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 
-export function AppSidebarHeader({
-    breadcrumbs = [],
-}: {
-    breadcrumbs?: BreadcrumbItemType[];
-}) {
-    const { unreadAnnouncementsCount, auth } = usePage().props as any;
+export function AppSidebarHeader() {
+    const { unreadAnnouncementsCount, auth } = usePage().props as unknown as {
+        unreadAnnouncementsCount: number;
+        auth: { user: { role: number } };
+    };
     const isFarmer = auth?.user?.role === 0; // 0 = farmer, 1 = admin
 
     const notificationLink = isFarmer ? '/farmer/announcements' : '/admin/announcements';

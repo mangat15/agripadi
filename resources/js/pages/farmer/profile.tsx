@@ -13,7 +13,6 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog';
 import {
-    User,
     Mail,
     Phone,
     MapPin,

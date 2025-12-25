@@ -34,6 +34,17 @@ interface Question {
     explanation: string;
 }
 
+interface SubmitData {
+    title: string;
+    description: string;
+    category: string;
+    learning_material_id: number | null;
+    passing_score: number;
+    time_limit: number | null;
+    is_active: boolean;
+    questions: Question[];
+}
+
 export default function QuizCreate({ categories, learningMaterials }: Props) {
     const [newCategory, setNewCategory] = useState('');
     const [questions, setQuestions] = useState<Question[]>([
@@ -68,7 +79,7 @@ export default function QuizCreate({ categories, learningMaterials }: Props) {
         }
     };
 
-    const updateQuestion = (index: number, field: keyof Question, value: any) => {
+    const updateQuestion = (index: number, field: keyof Question, value: string | number) => {
         const updated = [...questions];
         updated[index] = { ...updated[index], [field]: value };
         setQuestions(updated);
@@ -98,8 +109,8 @@ export default function QuizCreate({ categories, learningMaterials }: Props) {
             questions: questions,
         };
 
-        // Use router.post with type assertion
-        router.post('/admin/quiz', submitData as any, {
+        // Use router.post
+        router.post('/admin/quiz', submitData as SubmitData, {
             onSuccess: () => {
                 router.visit('/admin/quiz');
             },

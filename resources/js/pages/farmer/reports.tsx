@@ -41,7 +41,7 @@ export default function FarmerReports({ reports }: Props) {
     const [selectedReport, setSelectedReport] = useState<Report | null>(null);
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, processing, errors, reset } = useForm({
         title: '',
         type: '',
         description: '',

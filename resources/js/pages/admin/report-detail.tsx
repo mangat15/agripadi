@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { MapPin, Calendar, User, FileText, Image as ImageIcon } from 'lucide-react';
+import { MapPin, Calendar, User, FileText } from 'lucide-react';
 import { useForm, router } from '@inertiajs/react';
 
 interface User {
@@ -37,7 +37,7 @@ interface Props {
 export default function AdminReportDetail({ report }: Props) {
     const [isResponding, setIsResponding] = useState(false);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, processing, errors, reset } = useForm({
         admin_response: report.admin_response || '',
         status: report.status as 'pending' | 'under_review' | 'resolved',
     });

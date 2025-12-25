@@ -80,7 +80,7 @@ export default function QuizEdit({ quiz, categories, learningMaterials }: Props)
 
     useEffect(() => {
         setData('questions', questions);
-    }, [questions]);
+    }, [questions, setData]);
 
     const addQuestion = () => {
         const newQuestion: Question = {
@@ -99,7 +99,7 @@ export default function QuizEdit({ quiz, categories, learningMaterials }: Props)
         }
     };
 
-    const updateQuestion = (index: number, field: keyof Question, value: any) => {
+    const updateQuestion = (index: number, field: keyof Question, value: string | number) => {
         const updated = [...questions];
         updated[index] = { ...updated[index], [field]: value };
         setQuestions(updated);
