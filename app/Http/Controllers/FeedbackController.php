@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\FeedbackResponseMail;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class FeedbackController extends Controller
@@ -125,7 +128,16 @@ class FeedbackController extends Controller
             'is_read' => true,
         ]);
 
-        return redirect()->back()->with('success', 'Nota berjaya ditambah');
+        // Send email notification to farmer
+        if ($feedback->user && $feedback->user->email) {
+            try {
+                Mail::to($feedback->user->email)->send(new FeedbackResponseMail($feedback));
+            } catch (\Exception $e) {
+                Log::error('Failed to send feedback response email to ' . $feedback->user->email . ': ' . $e->getMessage());
+            }
+        }
+
+        return redirect()->back()->with('success', 'Nota berjaya ditambah dan email telah dihantar');
     }
 
     // Admin: Delete feedback

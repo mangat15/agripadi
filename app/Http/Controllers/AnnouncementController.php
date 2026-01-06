@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewAnnouncementMail;
 use App\Models\Announcement;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -58,7 +62,7 @@ class AnnouncementController extends Controller
             $imagePath = $request->file('image')->store('announcements', 'public');
         }
 
-        Announcement::create([
+        $announcement = Announcement::create([
             'user_id' => $request->user()->user_id,
             'title' => $validated['title'],
             'content' => $validated['content'],
@@ -66,6 +70,11 @@ class AnnouncementController extends Controller
             'image' => $imagePath,
             'published_at' => ($validated['publish_now'] ?? true) ? now() : null,
         ]);
+
+        // Send email to all farmers if announcement is published
+        if ($announcement->published_at) {
+            $this->sendAnnouncementEmails($announcement);
+        }
 
         return redirect()->back()->with('success', 'Pengumuman berjaya dicipta');
     }
@@ -117,11 +126,40 @@ class AnnouncementController extends Controller
     // Admin: Publish/Unpublish announcement
     public function togglePublish(Announcement $announcement)
     {
+        $wasPublished = $announcement->published_at !== null;
+
         $announcement->update([
             'published_at' => $announcement->published_at ? null : now(),
         ]);
 
+        // Send email to all farmers if announcement is being published (not unpublished)
+        if (!$wasPublished && $announcement->published_at) {
+            $this->sendAnnouncementEmails($announcement);
+        }
+
         $message = $announcement->published_at ? 'Pengumuman berjaya diterbitkan' : 'Pengumuman berjaya dinyahterbitkan';
         return redirect()->back()->with('success', $message);
+    }
+
+    /**
+     * Send announcement emails to all farmers
+     */
+    private function sendAnnouncementEmails(Announcement $announcement)
+    {
+        // Get all farmers (role = 2)
+        $farmers = User::where('role', 2)
+            ->whereNotNull('email')
+            ->whereNotNull('email_verified_at')
+            ->get();
+
+        // Send email to each farmer
+        foreach ($farmers as $farmer) {
+            try {
+                Mail::to($farmer->email)->send(new NewAnnouncementMail($announcement));
+            } catch (\Exception $e) {
+                // Log error but don't stop the process
+                Log::error('Failed to send announcement email to ' . $farmer->email . ': ' . $e->getMessage());
+            }
+        }
     }
 }
