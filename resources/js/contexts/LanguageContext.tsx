@@ -1304,20 +1304,14 @@ const translations: Record<Language, Record<string, string>> = {
 };
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-    const [language, setLanguageState] = useState<Language>('ms');
-
-    // Load language preference from localStorage on mount
-    useEffect(() => {
+    const [language, setLanguageState] = useState<Language>(() => {
         const savedLanguage = localStorage.getItem('agripadi_language') as Language | null;
-        if (
-            savedLanguage &&
-            (savedLanguage === 'ms' || savedLanguage === 'en') &&
-            savedLanguage !== language
-        ) {
-            setLanguageState(savedLanguage);
-            document.documentElement.lang = savedLanguage === 'ms' ? 'ms-MY' : 'en-US';
-        }
-    }, []);
+        return savedLanguage === 'ms' || savedLanguage === 'en' ? savedLanguage : 'ms';
+    });
+
+    useEffect(() => {
+        document.documentElement.lang = language === 'ms' ? 'ms-MY' : 'en-US';
+    }, [language]);
 
     const setLanguage = (lang: Language) => {
         setLanguageState(lang);

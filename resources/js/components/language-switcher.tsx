@@ -1,18 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function LanguageSwitcher() {
     const [language, setLanguage] = useState<'ms' | 'en'>('ms');
-
-    // Load language preference from localStorage on mount
-    useEffect(() => {
-        const savedLanguage = localStorage.getItem('agripadi_language') as 'ms' | 'en' | null;
-        if (savedLanguage && savedLanguage !== language) {
-            setLanguage(savedLanguage);
-            document.documentElement.lang = savedLanguage === 'ms' ? 'ms-MY' : 'en-US';
-        }
-    }, []);
 
     const toggleLanguage = () => {
         const newLanguage = language === 'ms' ? 'en' : 'ms';
