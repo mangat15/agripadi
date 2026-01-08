@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use function Pest\Laravel\{actingAs, get, patch, delete};
+use function Pest\Laravel\{actingAs, get, patch, delete, from};
 
 uses(RefreshDatabase::class);
 
@@ -42,6 +42,7 @@ test('email verification status is unchanged when the email address is unchanged
 
     actingAs($user);
     $response = patch(route('profile.update'), [
+        'name' => $user->name,
         'email' => $user->email,
         'phone' => '1234567890',
     ]);
@@ -72,6 +73,7 @@ test('correct password must be provided to delete account', function () {
     $user = User::factory()->create();
 
     actingAs($user);
+    from(route('profile.edit'));
     $response = delete(route('profile.destroy'), [
         'password' => 'wrong-password',
     ]);

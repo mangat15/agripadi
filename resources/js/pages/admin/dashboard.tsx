@@ -56,14 +56,14 @@ interface AdminDashboardProps extends SharedData {
 }
 
 // Utility function to format dates based on language
-function formatDate(dateString: string, language: 'ms' | 'en'): string {
+function formatDate(dateString: string, _language: 'ms' | 'en'): string {
     const match = dateString.match(/(\d+)\s*(day|hour|minute|month)s?\s*ago/i);
 
     if (match) {
         const value = match[1];
         const unit = match[2].toLowerCase();
 
-        if (language === 'ms') {
+        if (_language === 'ms') {
             const unitMap: Record<string, string> = {
                 'month': value === '1' ? 'bulan lalu' : `${value} bulan lalu`,
                 'day': value === '1' ? 'hari lalu' : `${value} hari lalu`,
@@ -80,7 +80,7 @@ function formatDate(dateString: string, language: 'ms' | 'en'): string {
 }
 
 // Utility function to format role names based on language
-function formatRoleName(role: string, language: 'ms' | 'en'): string {
+function formatRoleName(role: string, _language: 'ms' | 'en'): string {
     const roleKey = role.toLowerCase() === 'farmer' || role.toLowerCase() === 'petani'
         ? 'role.farmerShort'
         : 'role.adminShort';
