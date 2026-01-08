@@ -56,14 +56,14 @@ interface AdminDashboardProps extends SharedData {
 }
 
 // Utility function to format dates based on language
-function formatDate(dateString: string, _language: 'ms' | 'en'): string {
+function formatDate(dateString: string, language: 'ms' | 'en'): string {
     const match = dateString.match(/(\d+)\s*(day|hour|minute|month)s?\s*ago/i);
 
     if (match) {
         const value = match[1];
         const unit = match[2].toLowerCase();
 
-        if (_language === 'ms') {
+        if (language === 'ms') {
             const unitMap: Record<string, string> = {
                 'month': value === '1' ? 'bulan lalu' : `${value} bulan lalu`,
                 'day': value === '1' ? 'hari lalu' : `${value} hari lalu`,
@@ -79,13 +79,12 @@ function formatDate(dateString: string, _language: 'ms' | 'en'): string {
     return dateString;
 }
 
-// Utility function to format role names based on language
-function formatRoleName(role: string, _language: 'ms' | 'en'): string {
+// Utility function to format role names - returns translation key
+function formatRoleName(role: string): string {
     const roleKey = role.toLowerCase() === 'farmer' || role.toLowerCase() === 'petani'
         ? 'role.farmerShort'
         : 'role.adminShort';
 
-    // This will be handled by translation context
     return roleKey;
 }
 
@@ -470,7 +469,7 @@ export default function AdminDashboard() {
                                                             variant="secondary"
                                                             className="text-xs font-semibold bg-purple-100 text-purple-800 border-purple-200"
                                                         >
-                                                            {t(formatRoleName(user.role, 'ms'))}
+                                                            {t(formatRoleName(user.role))}
                                                         </Badge>
                                                         <span className="text-sm text-gray-600 font-medium">
                                                             {formatDate(user.date, 'ms')}
