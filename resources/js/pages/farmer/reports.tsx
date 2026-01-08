@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { FileText, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import { useForm, router } from '@inertiajs/react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Report {
     id: number;
@@ -40,6 +41,7 @@ export default function FarmerReports({ reports }: Props) {
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [selectedReport, setSelectedReport] = useState<Report | null>(null);
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+    const { t, language } = useLanguage();
 
     const { data, setData, processing, errors, reset } = useForm({
         title: '',
@@ -122,7 +124,7 @@ export default function FarmerReports({ reports }: Props) {
     };
 
     const handleDelete = (reportId: number) => {
-        if (confirm('Adakah anda pasti mahu memadam laporan ini?')) {
+        if (confirm(t('reports.confirmDelete'))) {
             router.delete(`/farmer/reports/${reportId}`);
         }
     };
@@ -135,18 +137,18 @@ export default function FarmerReports({ reports }: Props) {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'pending':
-                return <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">Menunggu</span>;
+                return <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">{t('reports.status.pending')}</span>;
             case 'under_review':
-                return <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Dalam Semakan</span>;
+                return <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">{t('reports.status.under_review')}</span>;
             case 'resolved':
-                return <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Selesai</span>;
+                return <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">{t('reports.status.resolved')}</span>;
             default:
                 return <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded">{status}</span>;
         }
     };
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ms-MY', {
+        return new Date(dateString).toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -154,14 +156,14 @@ export default function FarmerReports({ reports }: Props) {
     };
 
     return (
-        <FarmerSidebarLayout breadcrumbs={[{ title: 'Pelaporan', href: '/farmer/reports' }]}>
+        <FarmerSidebarLayout breadcrumbs={[{ title: t('nav.reports'), href: '/farmer/reports' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Pelaporan Ladang</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('reports.title')}</h1>
                         <p className="text-sm text-gray-600 mt-1">
-                            Laporkan masalah atau isu di ladang anda
+                            {t('reports.subtitle')}
                         </p>
                     </div>
                     <Button
@@ -169,7 +171,7 @@ export default function FarmerReports({ reports }: Props) {
                         className="bg-green-600 hover:bg-green-700"
                     >
                         <Plus className="h-4 w-4 mr-2" />
-                        Hantar Laporan Baru
+                        {t('reports.submitNew')}
                     </Button>
                 </div>
 
@@ -180,7 +182,7 @@ export default function FarmerReports({ reports }: Props) {
                             <CardContent className="flex flex-col items-center justify-center py-12">
                                 <FileText className="h-12 w-12 text-gray-400 mb-4" />
                                 <p className="text-gray-500 text-center">
-                                    Tiada laporan. Klik butang di atas untuk membuat laporan baru.
+                                    {t('reports.noReports')}
                                 </p>
                             </CardContent>
                         </Card>
@@ -214,11 +216,11 @@ export default function FarmerReports({ reports }: Props) {
                                                     </svg>
                                                 </div>
                                                 <div className="flex-1">
-                                                    <p className="text-sm font-semibold text-blue-900">Maklum Balas dari Pegawai Pertanian</p>
+                                                    <p className="text-sm font-semibold text-blue-900">{t('reports.adminResponse')}</p>
                                                     <p className="text-sm text-blue-800 mt-1">{report.admin_response}</p>
                                                     {report.responded_at && (
                                                         <p className="text-xs text-blue-600 mt-1">
-                                                            Dijawab pada {formatDate(report.responded_at)}
+                                                            {t('reports.respondedOn')} {formatDate(report.responded_at)}
                                                         </p>
                                                     )}
                                                 </div>
@@ -232,7 +234,7 @@ export default function FarmerReports({ reports }: Props) {
                                             size="sm"
                                             onClick={() => handleViewReport(report)}
                                         >
-                                            Lihat Detail
+                                            {t('reports.viewDetails')}
                                         </Button>
                                         <Button
                                             variant="outline"
@@ -241,7 +243,7 @@ export default function FarmerReports({ reports }: Props) {
                                             className="hover:bg-blue-50"
                                         >
                                             <Edit className="h-4 w-4 mr-1" />
-                                            Edit
+                                            {t('reports.edit')}
                                         </Button>
                                         <Button
                                             variant="outline"
@@ -250,7 +252,7 @@ export default function FarmerReports({ reports }: Props) {
                                             className="hover:bg-red-50 hover:text-red-600"
                                         >
                                             <Trash2 className="h-4 w-4 mr-1" />
-                                            Padam
+                                            {t('reports.delete')}
                                         </Button>
                                     </div>
                                 </CardContent>
@@ -262,28 +264,29 @@ export default function FarmerReports({ reports }: Props) {
 
             {/* Create Report Dialog */}
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
                     <DialogHeader>
-                        <DialogTitle>Hantar Laporan Baru</DialogTitle>
+                        <DialogTitle>{t('reports.form.createTitle')}</DialogTitle>
                         <DialogDescription>
-                            Isikan maklumat berkaitan masalah di ladang anda
+                            {t('reports.form.createDescription')}
                         </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+                        <div className="space-y-4 overflow-y-auto pr-2 flex-1">
                         <div className="space-y-2">
-                            <Label htmlFor="title">Tajuk Laporan *</Label>
+                            <Label htmlFor="title">{t('reports.form.reportTitle')}</Label>
                             <Input
                                 id="title"
                                 value={data.title}
                                 onChange={(e) => setData('title', e.target.value)}
-                                placeholder="Contoh: Masalah Bekalan Air"
+                                placeholder={t('reports.form.titlePlaceholder')}
                                 required
                             />
                             {errors.title && <p className="text-sm text-red-600">{errors.title}</p>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="type">Jenis Masalah *</Label>
+                            <Label htmlFor="type">{t('reports.form.problemType')}</Label>
                             <select
                                 id="type"
                                 value={data.type}
@@ -291,35 +294,35 @@ export default function FarmerReports({ reports }: Props) {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                                 required
                             >
-                                <option value="">Pilih jenis masalah</option>
-                                <option value="Masalah Pengairan">Masalah Pengairan</option>
-                                <option value="Kawalan Perosak">Kawalan Perosak</option>
-                                <option value="Pengurusan Tanah">Pengurusan Tanah</option>
-                                <option value="Penyakit Tanaman">Penyakit Tanaman</option>
-                                <option value="Lain-lain">Lain-lain</option>
+                                <option value="">{t('reports.form.selectProblemType')}</option>
+                                <option value={t('reports.form.type.irrigation')}>{t('reports.form.type.irrigation')}</option>
+                                <option value={t('reports.form.type.pestControl')}>{t('reports.form.type.pestControl')}</option>
+                                <option value={t('reports.form.type.soilManagement')}>{t('reports.form.type.soilManagement')}</option>
+                                <option value={t('reports.form.type.plantDisease')}>{t('reports.form.type.plantDisease')}</option>
+                                <option value={t('reports.form.type.other')}>{t('reports.form.type.other')}</option>
                             </select>
                             {errors.type && <p className="text-sm text-red-600">{errors.type}</p>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="location">Lokasi Ladang *</Label>
+                            <Label htmlFor="location">{t('reports.form.farmLocation')}</Label>
                             <Input
                                 id="location"
                                 value={data.location}
                                 onChange={(e) => setData('location', e.target.value)}
-                                placeholder="Contoh: Lot 123, Kampung Sungai Petani, Kedah"
+                                placeholder={t('reports.form.locationPlaceholder')}
                                 required
                             />
                             {errors.location && <p className="text-sm text-red-600">{errors.location}</p>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="description">Penerangan Masalah *</Label>
+                            <Label htmlFor="description">{t('reports.form.problemDescription')}</Label>
                             <Textarea
                                 id="description"
                                 value={data.description}
                                 onChange={(e) => setData('description', e.target.value)}
-                                placeholder="Terangkan masalah yang anda hadapi..."
+                                placeholder={t('reports.form.descriptionPlaceholder')}
                                 rows={4}
                                 required
                             />
@@ -327,7 +330,7 @@ export default function FarmerReports({ reports }: Props) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="image">Gambar (Opsional)</Label>
+                            <Label htmlFor="image">{t('reports.form.imageOptional')}</Label>
                             <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                                 <input
                                     id="image"
@@ -339,9 +342,9 @@ export default function FarmerReports({ reports }: Props) {
                                 <label htmlFor="image" className="cursor-pointer">
                                     <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
                                     <p className="mt-2 text-sm text-gray-600">
-                                        Klik untuk muat naik gambar
+                                        {t('reports.form.clickToUploadImage')}
                                     </p>
-                                    <p className="text-xs text-gray-500">PNG, JPG, GIF sehingga 10MB</p>
+                                    <p className="text-xs text-gray-500">{t('reports.form.imageFormat')}</p>
                                     {data.image && (
                                         <p className="mt-2 text-sm text-green-600 font-medium">
                                             {data.image.name}
@@ -353,7 +356,7 @@ export default function FarmerReports({ reports }: Props) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="pdf_letter">Surat PDF (Opsional)</Label>
+                            <Label htmlFor="pdf_letter">{t('reports.form.pdfLetterOptional')}</Label>
                             <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                                 <input
                                     id="pdf_letter"
@@ -365,9 +368,9 @@ export default function FarmerReports({ reports }: Props) {
                                 <label htmlFor="pdf_letter" className="cursor-pointer">
                                     <FileText className="mx-auto h-12 w-12 text-gray-400" />
                                     <p className="mt-2 text-sm text-gray-600">
-                                        Klik untuk muat naik surat PDF
+                                        {t('reports.form.clickToUploadPdf')}
                                     </p>
-                                    <p className="text-xs text-gray-500">PDF sehingga 10MB</p>
+                                    <p className="text-xs text-gray-500">{t('reports.form.pdfFormat')}</p>
                                     {data.pdf_letter && (
                                         <p className="mt-2 text-sm text-green-600 font-medium">
                                             {data.pdf_letter.name}
@@ -377,8 +380,9 @@ export default function FarmerReports({ reports }: Props) {
                             </div>
                             {errors.pdf_letter && <p className="text-sm text-red-600">{errors.pdf_letter}</p>}
                         </div>
+                        </div>
 
-                        <DialogFooter>
+                        <DialogFooter className="mt-4">
                             <Button
                                 type="button"
                                 variant="outline"
@@ -387,14 +391,14 @@ export default function FarmerReports({ reports }: Props) {
                                     reset();
                                 }}
                             >
-                                Batal
+                                {t('reports.form.cancel')}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={processing}
                                 className="bg-green-600 hover:bg-green-700"
                             >
-                                {processing ? 'Menghantar...' : 'Hantar Laporan'}
+                                {processing ? t('reports.form.submitting') : t('reports.form.submit')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -403,14 +407,15 @@ export default function FarmerReports({ reports }: Props) {
 
             {/* Edit Report Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
                     <DialogHeader>
                         <DialogTitle>Edit Laporan</DialogTitle>
                         <DialogDescription>
                             Kemaskini maklumat laporan anda
                         </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={handleEditSubmit} className="space-y-4">
+                    <form onSubmit={handleEditSubmit} className="flex flex-col flex-1 overflow-hidden">
+                        <div className="space-y-4 overflow-y-auto pr-2 flex-1">
                         <div className="space-y-2">
                             <Label htmlFor="edit-title">Tajuk Laporan *</Label>
                             <Input
@@ -487,8 +492,9 @@ export default function FarmerReports({ reports }: Props) {
                             <p className="text-xs text-gray-500">Kosongkan jika tidak mahu mengubah surat PDF</p>
                             {editForm.errors.pdf_letter && <p className="text-sm text-red-600">{editForm.errors.pdf_letter}</p>}
                         </div>
+                        </div>
 
-                        <DialogFooter>
+                        <DialogFooter className="mt-4">
                             <Button
                                 type="button"
                                 variant="outline"

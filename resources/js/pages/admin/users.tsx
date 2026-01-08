@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
     Dialog,
     DialogContent,
@@ -27,6 +28,7 @@ interface User {
     user_id: number;
     name: string;
     email: string;
+    phone: string;
     role: number; // 0 = farmer, 1 = admin
     role_label: 'admin' | 'farmer';
     location: string | null;
@@ -38,6 +40,7 @@ interface Props {
 }
 
 export default function AdminUsers({ users }: Props) {
+    const { t, language } = useLanguage();
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -46,6 +49,7 @@ export default function AdminUsers({ users }: Props) {
     const { data, setData, processing, errors, reset } = useForm({
         name: '',
         email: '',
+        phone: '',
         password: '',
         role: 'farmer' as 'admin' | 'farmer',
         location: '',
@@ -54,6 +58,7 @@ export default function AdminUsers({ users }: Props) {
     const editForm = useForm({
         name: '',
         email: '',
+        phone: '',
         password: '',
         role: 'farmer' as 'admin' | 'farmer',
         location: '',
@@ -75,6 +80,7 @@ export default function AdminUsers({ users }: Props) {
         editForm.setData({
             name: user.name,
             email: user.email,
+            phone: user.phone || '',
             password: '',
             role: user.role_label,
             location: user.location || '',
@@ -96,7 +102,7 @@ export default function AdminUsers({ users }: Props) {
     };
 
     const handleDelete = (userId: number) => {
-        if (confirm('Adakah anda pasti mahu memadam pengguna ini?')) {
+        if (confirm(t('adminUsers.deleteConfirm'))) {
             router.delete(`/admin/users/${userId}`);
         }
     };
@@ -109,7 +115,7 @@ export default function AdminUsers({ users }: Props) {
     );
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ms-MY', {
+        return new Date(dateString).toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -117,14 +123,14 @@ export default function AdminUsers({ users }: Props) {
     };
 
     return (
-        <AdminSidebarLayout breadcrumbs={[{ title: 'Pengurusan Pengguna', href: '/admin/users' }]}>
+        <AdminSidebarLayout breadcrumbs={[{ title: t('adminUsers.title'), href: '/admin/users' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Pengurusan Pengguna</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('adminUsers.title')}</h1>
                         <p className="text-sm text-gray-600 mt-1">
-                            Urus pengguna sistem AgriPadi
+                            {t('adminUsers.subtitle')}
                         </p>
                     </div>
                     <Button
@@ -132,7 +138,7 @@ export default function AdminUsers({ users }: Props) {
                         className="bg-green-600 hover:bg-green-700"
                     >
                         <UserPlus className="h-4 w-4 mr-2" />
-                        Tambah Pengguna
+                        {t('adminUsers.createNew')}
                     </Button>
                 </div>
 
@@ -142,7 +148,7 @@ export default function AdminUsers({ users }: Props) {
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                             <Input
-                                placeholder="Cari pengguna mengikut nama, e-mel atau lokasi..."
+                                placeholder={t('adminUsers.searchPlaceholder')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="pl-10"
@@ -154,25 +160,26 @@ export default function AdminUsers({ users }: Props) {
                 {/* Users Table */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Senarai Pengguna ({filteredUsers.length})</CardTitle>
+                        <CardTitle>{t('adminUsers.usersList')} ({filteredUsers.length})</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Pengguna</TableHead>
-                                    <TableHead>E-mel</TableHead>
-                                    <TableHead>Lokasi</TableHead>
-                                    <TableHead>Peranan</TableHead>
-                                    <TableHead>Tarikh Daftar</TableHead>
-                                    <TableHead className="text-right">Tindakan</TableHead>
+                                    <TableHead>{t('adminUsers.table.user')}</TableHead>
+                                    <TableHead>{t('adminUsers.table.email')}</TableHead>
+                                    <TableHead>Nombor Telefon</TableHead>
+                                    <TableHead>{t('adminUsers.table.location')}</TableHead>
+                                    <TableHead>{t('adminUsers.table.role')}</TableHead>
+                                    <TableHead>{t('adminUsers.table.registeredDate')}</TableHead>
+                                    <TableHead className="text-right">{t('adminUsers.table.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {filteredUsers.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                                            Tiada pengguna dijumpai
+                                        <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                                            {t('adminUsers.noUsers')}
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -180,6 +187,7 @@ export default function AdminUsers({ users }: Props) {
                                         <TableRow key={user.user_id}>
                                             <TableCell className="font-medium">{user.name}</TableCell>
                                             <TableCell>{user.email}</TableCell>
+                                            <TableCell>{user.phone || '-'}</TableCell>
                                             <TableCell>{user.location || '-'}</TableCell>
                                             <TableCell>
                                                 <span
@@ -189,7 +197,7 @@ export default function AdminUsers({ users }: Props) {
                                                             : 'bg-green-100 text-green-800'
                                                     }`}
                                                 >
-                                                    {user.role_label === 'admin' ? 'Admin' : 'Petani'}
+                                                    {user.role_label === 'admin' ? t('adminUsers.role.admin') : t('adminUsers.role.farmer')}
                                                 </span>
                                             </TableCell>
                                             <TableCell>{formatDate(user.created_at)}</TableCell>
@@ -226,33 +234,33 @@ export default function AdminUsers({ users }: Props) {
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Tambah Pengguna Baru</DialogTitle>
+                        <DialogTitle>{t('adminUsers.form.createTitle')}</DialogTitle>
                         <DialogDescription>
-                            Isikan maklumat pengguna baru untuk sistem AgriPadi
+                            {t('adminUsers.form.createSubtitle')}
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Nama Penuh *</Label>
+                                <Label htmlFor="name">{t('adminUsers.form.name')} *</Label>
                                 <Input
                                     id="name"
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
-                                    placeholder="Masukkan nama penuh"
+                                    placeholder={t('adminUsers.form.namePlaceholder')}
                                     required
                                 />
                                 {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="email">Alamat E-mel *</Label>
+                                <Label htmlFor="email">{t('adminUsers.form.email')} *</Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
-                                    placeholder="Masukkan alamat e-mel"
+                                    placeholder={t('adminUsers.form.emailPlaceholder')}
                                     required
                                 />
                                 {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
@@ -261,40 +269,53 @@ export default function AdminUsers({ users }: Props) {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="role">Peranan *</Label>
-                                <select
-                                    id="role"
-                                    value={data.role}
-                                    onChange={(e) => setData('role', e.target.value as 'admin' | 'farmer')}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                <Label htmlFor="phone">Nombor Telefon *</Label>
+                                <Input
+                                    id="phone"
+                                    type="tel"
+                                    value={data.phone}
+                                    onChange={(e) => setData('phone', e.target.value)}
+                                    placeholder="012-3456789"
                                     required
-                                >
-                                    <option value="farmer">Petani</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                                {errors.role && <p className="text-sm text-red-600">{errors.role}</p>}
+                                />
+                                {errors.phone && <p className="text-sm text-red-600">{errors.phone}</p>}
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="location">Lokasi</Label>
+                                <Label htmlFor="location">{t('adminUsers.form.location')}</Label>
                                 <Input
                                     id="location"
                                     value={data.location}
                                     onChange={(e) => setData('location', e.target.value)}
-                                    placeholder="Masukkan lokasi"
+                                    placeholder={t('adminUsers.form.locationPlaceholder')}
                                 />
                                 {errors.location && <p className="text-sm text-red-600">{errors.location}</p>}
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="password">Kata Laluan *</Label>
+                            <Label htmlFor="role">{t('adminUsers.form.role')} *</Label>
+                            <select
+                                id="role"
+                                value={data.role}
+                                onChange={(e) => setData('role', e.target.value as 'admin' | 'farmer')}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                required
+                            >
+                                <option value="farmer">{t('adminUsers.role.farmer')}</option>
+                                <option value="admin">{t('adminUsers.role.admin')}</option>
+                            </select>
+                            {errors.role && <p className="text-sm text-red-600">{errors.role}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="password">{t('adminUsers.form.password')} *</Label>
                             <Input
                                 id="password"
                                 type="password"
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
-                                placeholder="Masukkan kata laluan (minimum 8 aksara)"
+                                placeholder={t('adminUsers.form.passwordPlaceholder')}
                                 required
                             />
                             {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
@@ -309,14 +330,14 @@ export default function AdminUsers({ users }: Props) {
                                     reset();
                                 }}
                             >
-                                Batal
+                                {t('adminUsers.cancel')}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={processing}
                                 className="bg-green-600 hover:bg-green-700"
                             >
-                                {processing ? 'Menambah...' : 'Tambah Pengguna'}
+                                {processing ? t('adminUsers.adding') : t('adminUsers.addUser')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -327,33 +348,33 @@ export default function AdminUsers({ users }: Props) {
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Edit Pengguna</DialogTitle>
+                        <DialogTitle>{t('adminUsers.form.editTitle')}</DialogTitle>
                         <DialogDescription>
-                            Kemaskini maklumat pengguna
+                            {t('adminUsers.form.editSubtitle')}
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleEditSubmit} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="edit-name">Nama Penuh *</Label>
+                                <Label htmlFor="edit-name">{t('adminUsers.form.name')} *</Label>
                                 <Input
                                     id="edit-name"
                                     value={editForm.data.name}
                                     onChange={(e) => editForm.setData('name', e.target.value)}
-                                    placeholder="Masukkan nama penuh"
+                                    placeholder={t('adminUsers.form.namePlaceholder')}
                                     required
                                 />
                                 {editForm.errors.name && <p className="text-sm text-red-600">{editForm.errors.name}</p>}
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="edit-email">Alamat E-mel *</Label>
+                                <Label htmlFor="edit-email">{t('adminUsers.form.email')} *</Label>
                                 <Input
                                     id="edit-email"
                                     type="email"
                                     value={editForm.data.email}
                                     onChange={(e) => editForm.setData('email', e.target.value)}
-                                    placeholder="Masukkan alamat e-mel"
+                                    placeholder={t('adminUsers.form.emailPlaceholder')}
                                     required
                                 />
                                 {editForm.errors.email && <p className="text-sm text-red-600">{editForm.errors.email}</p>}
@@ -362,42 +383,55 @@ export default function AdminUsers({ users }: Props) {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="edit-role">Peranan *</Label>
-                                <select
-                                    id="edit-role"
-                                    value={editForm.data.role}
-                                    onChange={(e) => editForm.setData('role', e.target.value as 'admin' | 'farmer')}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                <Label htmlFor="edit-phone">Nombor Telefon *</Label>
+                                <Input
+                                    id="edit-phone"
+                                    type="tel"
+                                    value={editForm.data.phone}
+                                    onChange={(e) => editForm.setData('phone', e.target.value)}
+                                    placeholder="012-3456789"
                                     required
-                                >
-                                    <option value="farmer">Petani</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                                {editForm.errors.role && <p className="text-sm text-red-600">{editForm.errors.role}</p>}
+                                />
+                                {editForm.errors.phone && <p className="text-sm text-red-600">{editForm.errors.phone}</p>}
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="edit-location">Lokasi</Label>
+                                <Label htmlFor="edit-location">{t('adminUsers.form.location')}</Label>
                                 <Input
                                     id="edit-location"
                                     value={editForm.data.location}
                                     onChange={(e) => editForm.setData('location', e.target.value)}
-                                    placeholder="Masukkan lokasi"
+                                    placeholder={t('adminUsers.form.locationPlaceholder')}
                                 />
                                 {editForm.errors.location && <p className="text-sm text-red-600">{editForm.errors.location}</p>}
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="edit-password">Kata Laluan Baru</Label>
+                            <Label htmlFor="edit-role">{t('adminUsers.form.role')} *</Label>
+                            <select
+                                id="edit-role"
+                                value={editForm.data.role}
+                                onChange={(e) => editForm.setData('role', e.target.value as 'admin' | 'farmer')}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                required
+                            >
+                                <option value="farmer">{t('adminUsers.role.farmer')}</option>
+                                <option value="admin">{t('adminUsers.role.admin')}</option>
+                            </select>
+                            {editForm.errors.role && <p className="text-sm text-red-600">{editForm.errors.role}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-password">{t('adminUsers.form.passwordEdit')}</Label>
                             <Input
                                 id="edit-password"
                                 type="password"
                                 value={editForm.data.password}
                                 onChange={(e) => editForm.setData('password', e.target.value)}
-                                placeholder="Kosongkan jika tidak mahu tukar kata laluan"
+                                placeholder={t('adminUsers.form.passwordEditPlaceholder')}
                             />
-                            <p className="text-xs text-gray-500">Kosongkan jika tidak mahu mengubah kata laluan</p>
+                            <p className="text-xs text-gray-500">{t('adminUsers.form.passwordHint')}</p>
                             {editForm.errors.password && <p className="text-sm text-red-600">{editForm.errors.password}</p>}
                         </div>
 
@@ -410,14 +444,14 @@ export default function AdminUsers({ users }: Props) {
                                     editForm.reset();
                                 }}
                             >
-                                Batal
+                                {t('adminUsers.cancel')}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={editForm.processing}
                                 className="bg-green-600 hover:bg-green-700"
                             >
-                                {editForm.processing ? 'Mengemas kini...' : 'Kemas Kini'}
+                                {editForm.processing ? t('adminUsers.updating') : t('adminUsers.update')}
                             </Button>
                         </DialogFooter>
                     </form>

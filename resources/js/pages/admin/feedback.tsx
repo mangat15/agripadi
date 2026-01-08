@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ThumbsUp, ThumbsDown, Star, MessageCircle, User, Calendar } from 'lucide-react';
 import { router } from '@inertiajs/react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface User {
     id: number;
@@ -43,6 +44,7 @@ interface Props {
 }
 
 export default function AdminFeedback({ feedback, stats, featureSatisfaction }: Props) {
+    const { t, language } = useLanguage();
     const [activeTab, setActiveTab] = useState<'all' | 'positive' | 'improvement'>('all');
 
     const filteredFeedback = feedback.filter((item) => {
@@ -51,7 +53,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
     });
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ms-MY', {
+        return new Date(dateString).toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -81,7 +83,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
     };
 
     const handleDelete = (feedbackId: number) => {
-        if (confirm('Adakah anda pasti mahu memadam maklum balas ini?')) {
+        if (confirm(t('adminFeedback.deleteConfirm'))) {
             router.delete(`/admin/feedback/${feedbackId}`);
         }
     };
@@ -95,15 +97,15 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
     };
 
     return (
-        <AdminSidebarLayout breadcrumbs={[{ title: 'Maklum Balas Petani', href: '/admin/feedback' }]}>
+        <AdminSidebarLayout breadcrumbs={[{ title: t('adminFeedback.title'), href: '/admin/feedback' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex items-center gap-3">
                     <MessageCircle className="h-8 w-8 text-green-600" />
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Maklum Balas Petani</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('adminFeedback.title')}</h1>
                         <p className="text-sm text-gray-600 mt-1">
-                            Semak dan analisa maklum balas daripada petani untuk memperbaiki sistem
+                            {t('adminFeedback.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -114,7 +116,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Jumlah Maklum Balas</p>
+                                    <p className="text-sm text-gray-600">{t('adminFeedback.stats.total')}</p>
                                     <p className="text-2xl font-bold mt-1">{stats.total}</p>
                                 </div>
                                 <MessageCircle className="h-8 w-8 text-gray-400" />
@@ -126,7 +128,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Maklum Balas Positif</p>
+                                    <p className="text-sm text-gray-600">{t('adminFeedback.stats.positive')}</p>
                                     <p className="text-2xl font-bold mt-1 text-green-600">{stats.positive}</p>
                                     <p className="text-xs text-gray-500">
                                         {stats.total > 0
@@ -144,7 +146,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Cadangan Penambahbaikan</p>
+                                    <p className="text-sm text-gray-600">{t('adminFeedback.stats.improvement')}</p>
                                     <p className="text-2xl font-bold mt-1 text-red-600">{stats.improvement}</p>
                                     <p className="text-xs text-gray-500">
                                         {stats.total > 0
@@ -162,7 +164,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Penilaian Purata</p>
+                                    <p className="text-sm text-gray-600">{t('adminFeedback.stats.averageRating')}</p>
                                     <p className="text-2xl font-bold mt-1">
                                         {stats.average_rating ? stats.average_rating.toFixed(1) : 'N/A'}
                                         <span className="text-sm text-gray-500">/5</span>
@@ -178,7 +180,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                 {featureSatisfaction.length > 0 && (
                     <Card>
                         <CardHeader>
-                            <CardTitle>Kepuasan Ciri</CardTitle>
+                            <CardTitle>{t('adminFeedback.featureSatisfaction')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
@@ -216,7 +218,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                             }`}
                         >
-                            Semua
+                            {t('adminFeedback.filter.all')}
                             <span
                                 className={`px-2 py-0.5 rounded-full text-xs ${
                                     activeTab === 'all'
@@ -236,7 +238,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                             }`}
                         >
                             <ThumbsUp className="h-4 w-4" />
-                            Positif
+                            {t('adminFeedback.filter.positive')}
                             <span
                                 className={`px-2 py-0.5 rounded-full text-xs ${
                                     activeTab === 'positive'
@@ -256,7 +258,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                             }`}
                         >
                             <ThumbsDown className="h-4 w-4" />
-                            Perlu Penambahbaikan
+                            {t('adminFeedback.filter.improvement')}
                             <span
                                 className={`px-2 py-0.5 rounded-full text-xs ${
                                     activeTab === 'improvement'
@@ -274,12 +276,12 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Recent Feedback List */}
                     <div className="lg:col-span-2 space-y-4">
-                        <h2 className="text-lg font-semibold">Maklum Balas Terkini</h2>
+                        <h2 className="text-lg font-semibold">{t('adminFeedback.recentFeedback')}</h2>
 
                         {filteredFeedback.length === 0 ? (
                             <Card>
                                 <CardContent className="py-12 text-center text-gray-500">
-                                    Tiada maklum balas dijumpai
+                                    {t('adminFeedback.noFeedback')}
                                 </CardContent>
                             </Card>
                         ) : (
@@ -302,11 +304,11 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                                                         <div className="flex items-center gap-2 mt-1">
                                                             {item.type === 'positive' ? (
                                                                 <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded">
-                                                                    Positif
+                                                                    {t('adminFeedback.type.positive')}
                                                                 </span>
                                                             ) : (
                                                                 <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-medium rounded">
-                                                                    Penambahbaikan
+                                                                    {t('adminFeedback.type.improvement')}
                                                                 </span>
                                                             )}
                                                             {item.feature && (
@@ -316,7 +318,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                                                             )}
                                                             {!item.is_read && (
                                                                 <span className="px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded">
-                                                                    Baru
+                                                                    {t('adminFeedback.new')}
                                                                 </span>
                                                             )}
                                                         </div>
@@ -339,7 +341,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                                                                 size="sm"
                                                                 onClick={() => handleMarkAsRead(item.id)}
                                                             >
-                                                                Tanda Dibaca
+                                                                {t('adminFeedback.markAsRead')}
                                                             </Button>
                                                         )}
                                                         <Button
@@ -348,7 +350,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                                                             onClick={() => handleDelete(item.id)}
                                                             className="hover:bg-red-50 hover:text-red-600"
                                                         >
-                                                            Padam
+                                                            {t('adminFeedback.delete')}
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -362,20 +364,20 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
 
                     {/* Summary Stats Sidebar */}
                     <div className="space-y-4">
-                        <h2 className="text-lg font-semibold">Ringkasan</h2>
+                        <h2 className="text-lg font-semibold">{t('adminFeedback.summary')}</h2>
 
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-base">Status Bacaan</CardTitle>
+                                <CardTitle className="text-base">{t('adminFeedback.readStatus')}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm">Belum Dibaca</span>
+                                        <span className="text-sm">{t('adminFeedback.stats.unread')}</span>
                                         <span className="font-semibold text-blue-600">{stats.unread}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm">Telah Dibaca</span>
+                                        <span className="text-sm">{t('adminFeedback.read')}</span>
                                         <span className="font-semibold">{stats.total - stats.unread}</span>
                                     </div>
                                 </div>
@@ -388,7 +390,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                                     <div className="inline-flex items-center justify-center w-12 h-12 bg-green-500 rounded-full mb-3">
                                         <ThumbsUp className="h-6 w-6 text-white" />
                                     </div>
-                                    <p className="text-sm text-gray-600 mb-1">Kadar Kepuasan</p>
+                                    <p className="text-sm text-gray-600 mb-1">{t('adminFeedback.satisfactionRate')}</p>
                                     <p className="text-3xl font-bold text-green-600">
                                         {stats.total > 0
                                             ? Math.round((stats.positive / stats.total) * 100)
@@ -396,7 +398,7 @@ export default function AdminFeedback({ feedback, stats, featureSatisfaction }: 
                                         %
                                     </p>
                                     <p className="text-xs text-gray-500 mt-1">
-                                        Berdasarkan {stats.total} maklum balas
+                                        {t('adminFeedback.basedOn')} {stats.total} {t('adminFeedback.feedbackCount')}
                                     </p>
                                 </div>
                             </CardContent>

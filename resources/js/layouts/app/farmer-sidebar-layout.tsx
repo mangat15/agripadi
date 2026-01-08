@@ -11,7 +11,7 @@ export default function FarmerSidebarLayout({
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-emerald-100 via-green-100/60 to-amber-100/70">
             {/* Header at the top */}
             <AppSidebarHeader breadcrumbs={breadcrumbs} />
 
@@ -26,7 +26,7 @@ export default function FarmerSidebarLayout({
                 </button>
 
                 <FarmerSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-                <main className="flex-1 overflow-auto bg-gray-50">
+                <main className="flex-1 overflow-auto">
                     {children}
                 </main>
             </div>

@@ -22,6 +22,7 @@ import {
     Clock,
 } from 'lucide-react';
 import { useForm, router } from '@inertiajs/react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface User {
     id: number;
@@ -51,6 +52,7 @@ interface Props {
 
 export default function FarmerForum({ forums }: Props) {
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const { t, language } = useLanguage();
 
     const { data, setData, processing, errors, reset } = useForm<{
         title: string;
@@ -84,7 +86,7 @@ export default function FarmerForum({ forums }: Props) {
     };
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ms-MY', {
+        return new Date(dateString).toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -96,22 +98,22 @@ export default function FarmerForum({ forums }: Props) {
         const now = new Date();
         const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-        if (diffInSeconds < 60) return 'Baru sahaja';
-        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minit yang lalu`;
-        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} jam yang lalu`;
-        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} hari yang lalu`;
+        if (diffInSeconds < 60) return t('forum.justNow');
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} ${t('forum.minutesAgo')}`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} ${t('forum.hoursAgo')}`;
+        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} ${t('forum.daysAgo')}`;
         return formatDate(dateString);
     };
 
     return (
-        <FarmerSidebarLayout breadcrumbs={[{ title: 'Forum Komuniti', href: '/farmer/forum' }]}>
+        <FarmerSidebarLayout breadcrumbs={[{ title: t('forum.title'), href: '/farmer/forum' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Forum Komuniti</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('forum.title')}</h1>
                         <p className="text-sm text-gray-600 mt-1">
-                            Kongsi pengalaman dan bincang dengan petani lain
+                            {t('forum.subtitle')}
                         </p>
                     </div>
                     <Button
@@ -119,7 +121,7 @@ export default function FarmerForum({ forums }: Props) {
                         className="bg-green-600 hover:bg-green-700"
                     >
                         <Plus className="h-4 w-4 mr-2" />
-                        Cipta Forum Baru
+                        {t('forum.createNew')}
                     </Button>
                 </div>
 
@@ -129,7 +131,7 @@ export default function FarmerForum({ forums }: Props) {
                         <Card>
                             <CardContent className="py-12 text-center text-gray-500">
                                 <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                                <p>Tiada forum dijumpai. Cipta forum pertama anda!</p>
+                                <p>{t('forum.noForums')}</p>
                             </CardContent>
                         </Card>
                     ) : (
@@ -210,7 +212,7 @@ export default function FarmerForum({ forums }: Props) {
                                             className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
                                         >
                                             <MessageCircle className="h-4 w-4" />
-                                            <span>{forum.comments_count} Komen</span>
+                                            <span>{forum.comments_count} {t('forum.comments')}</span>
                                         </button>
                                     </div>
                                 </CardContent>
@@ -224,19 +226,19 @@ export default function FarmerForum({ forums }: Props) {
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Cipta Forum Baru</DialogTitle>
+                        <DialogTitle>{t('forum.form.createTitle')}</DialogTitle>
                         <DialogDescription>
-                            Forum anda akan disemak oleh pentadbir sebelum diterbitkan
+                            {t('forum.form.createDescription')}
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="title">Tajuk Forum *</Label>
+                            <Label htmlFor="title">{t('forum.form.title')}</Label>
                             <Input
                                 id="title"
                                 value={data.title}
                                 onChange={(e) => setData('title', e.target.value)}
-                                placeholder="Contoh: Cara mengatasi masalah perosak padi"
+                                placeholder={t('forum.form.titlePlaceholder')}
                                 required
                             />
                             {errors.title && (
@@ -245,30 +247,30 @@ export default function FarmerForum({ forums }: Props) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="category">Kategori (Pilihan)</Label>
+                            <Label htmlFor="category">{t('forum.form.category')}</Label>
                             <select
                                 id="category"
                                 value={data.category}
                                 onChange={(e) => setData('category', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                             >
-                                <option value="">Pilih kategori (pilihan)</option>
-                                <option value="Kawalan Perosak">Kawalan Perosak</option>
-                                <option value="Pengairan">Pengairan</option>
-                                <option value="Baja">Baja</option>
-                                <option value="Penuaian">Penuaian</option>
-                                <option value="Pemasaran">Pemasaran</option>
-                                <option value="Lain-lain">Lain-lain</option>
+                                <option value="">{t('forum.form.selectCategory')}</option>
+                                <option value={t('forum.form.category.pestControl')}>{t('forum.form.category.pestControl')}</option>
+                                <option value={t('forum.form.category.irrigation')}>{t('forum.form.category.irrigation')}</option>
+                                <option value={t('forum.form.category.fertilizer')}>{t('forum.form.category.fertilizer')}</option>
+                                <option value={t('forum.form.category.harvesting')}>{t('forum.form.category.harvesting')}</option>
+                                <option value={t('forum.form.category.marketing')}>{t('forum.form.category.marketing')}</option>
+                                <option value={t('forum.form.category.other')}>{t('forum.form.category.other')}</option>
                             </select>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="content">Kandungan *</Label>
+                            <Label htmlFor="content">{t('forum.form.content')}</Label>
                             <Textarea
                                 id="content"
                                 value={data.content}
                                 onChange={(e) => setData('content', e.target.value)}
-                                placeholder="Kongsikan pengalaman, soalan atau maklumat anda di sini..."
+                                placeholder={t('forum.form.contentPlaceholder')}
                                 rows={8}
                                 required
                             />
@@ -278,7 +280,7 @@ export default function FarmerForum({ forums }: Props) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="image">Gambar (Pilihan)</Label>
+                            <Label htmlFor="image">{t('forum.form.image')}</Label>
                             <Input
                                 id="image"
                                 type="file"
@@ -289,7 +291,7 @@ export default function FarmerForum({ forums }: Props) {
                             {errors.image && (
                                 <p className="text-sm text-red-600">{errors.image}</p>
                             )}
-                            <p className="text-xs text-gray-500">Maksimum 5MB. Format: JPG, PNG, GIF</p>
+                            <p className="text-xs text-gray-500">{t('forum.form.imageFormat')}</p>
                         </div>
 
                         <DialogFooter>
@@ -301,14 +303,14 @@ export default function FarmerForum({ forums }: Props) {
                                     reset();
                                 }}
                             >
-                                Batal
+                                {t('forum.form.cancel')}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={processing}
                                 className="bg-green-600 hover:bg-green-700"
                             >
-                                {processing ? 'Menghantar...' : 'Hantar untuk Semakan'}
+                                {processing ? t('forum.form.submitting') : t('forum.form.submit')}
                             </Button>
                         </DialogFooter>
                     </form>

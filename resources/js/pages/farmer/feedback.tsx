@@ -6,8 +6,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ThumbsUp, ThumbsDown, Zap, Target, Award } from 'lucide-react';
 import { useForm, router } from '@inertiajs/react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function FarmerFeedback() {
+    const { t } = useLanguage();
     const [selectedType, setSelectedType] = useState<'positive' | 'improvement' | null>(null);
 
     const { data, setData, processing, errors, reset } = useForm({
@@ -34,20 +36,20 @@ export default function FarmerFeedback() {
     };
 
     return (
-        <FarmerSidebarLayout breadcrumbs={[{ title: 'Maklum Balas', href: '/farmer/feedback' }]}>
+        <FarmerSidebarLayout breadcrumbs={[{ title: t('feedback.title'), href: '/farmer/feedback' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="text-center max-w-3xl mx-auto">
-                    <h1 className="text-3xl font-bold text-gray-900">Maklum Balas</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">{t('feedback.title')}</h1>
                     <p className="text-base text-gray-600 mt-3">
-                        Maklum balas anda penting kepada kami. Beritahu kami pendapat anda tentang sistem ini, dan cadangkan sebarang penambahbaikan.
+                        {t('feedback.subtitle')}
                     </p>
                 </div>
 
                 {/* Feedback Type Selection */}
                 <div className="max-w-4xl mx-auto">
                     <h2 className="text-xl font-semibold mb-4 text-center">
-                        Bagaimana anda menilai pengalaman anda dengan AgriPadi?
+                        {t('feedback.questionTitle')}
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,9 +79,9 @@ export default function FarmerFeedback() {
                                         }`}
                                     />
                                 </div>
-                                <h3 className="text-lg font-semibold">Maklum Balas Positif</h3>
+                                <h3 className="text-lg font-semibold">{t('feedback.positive')}</h3>
                                 <p className="text-sm text-gray-600 text-center">
-                                    Kongsikan apa yang anda suka tentang sistem
+                                    {t('feedback.positiveDescription')}
                                 </p>
                             </div>
                         </button>
@@ -110,9 +112,9 @@ export default function FarmerFeedback() {
                                         }`}
                                     />
                                 </div>
-                                <h3 className="text-lg font-semibold">Cadangan Penambahbaikan</h3>
+                                <h3 className="text-lg font-semibold">{t('feedback.improvement')}</h3>
                                 <p className="text-sm text-gray-600 text-center">
-                                    Beritahu kami isu yang anda hadapi atau cadangan untuk penambahbaikan
+                                    {t('feedback.improvementDescription')}
                                 </p>
                             </div>
                         </button>
@@ -125,32 +127,32 @@ export default function FarmerFeedback() {
                         <CardHeader>
                             <CardTitle>
                                 {selectedType === 'positive'
-                                    ? 'Kongsikan Maklum Balas Positif Anda'
-                                    : 'Apa yang boleh kami perbaiki?'}
+                                    ? t('feedback.form.positiveTitle')
+                                    : t('feedback.form.improvementTitle')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="feature">Ciri/Modul (Pilihan)</Label>
+                                    <Label htmlFor="feature">{t('feedback.form.feature')}</Label>
                                     <select
                                         id="feature"
                                         value={data.feature}
                                         onChange={(e) => setData('feature', e.target.value)}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                                     >
-                                        <option value="">Pilih ciri (pilihan)</option>
-                                        <option value="Bahan Pembelajaran">Bahan Pembelajaran</option>
-                                        <option value="Lawatan Maya Ladang">Lawatan Maya Ladang</option>
-                                        <option value="Sistem Pelaporan">Sistem Pelaporan</option>
-                                        <option value="Forum Komuniti">Forum Komuniti</option>
-                                        <option value="Pengumuman">Pengumuman</option>
-                                        <option value="Keseluruhan Sistem">Keseluruhan Sistem</option>
+                                        <option value="">{t('feedback.form.selectFeature')}</option>
+                                        <option value={t('feedback.form.feature.learning')}>{t('feedback.form.feature.learning')}</option>
+                                        <option value={t('feedback.form.feature.virtualTour')}>{t('feedback.form.feature.virtualTour')}</option>
+                                        <option value={t('feedback.form.feature.reporting')}>{t('feedback.form.feature.reporting')}</option>
+                                        <option value={t('feedback.form.feature.forum')}>{t('feedback.form.feature.forum')}</option>
+                                        <option value={t('feedback.form.feature.announcements')}>{t('feedback.form.feature.announcements')}</option>
+                                        <option value={t('feedback.form.feature.overall')}>{t('feedback.form.feature.overall')}</option>
                                     </select>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="rating">Penilaian (Pilihan)</Label>
+                                    <Label htmlFor="rating">{t('feedback.form.rating')}</Label>
                                     <div className="flex gap-2">
                                         {[1, 2, 3, 4, 5].map((rating) => (
                                             <button
@@ -167,14 +169,14 @@ export default function FarmerFeedback() {
                                             </button>
                                         ))}
                                     </div>
-                                    <p className="text-xs text-gray-500">1 = Sangat Tidak Puas, 5 = Sangat Puas</p>
+                                    <p className="text-xs text-gray-500">{t('feedback.form.ratingScale')}</p>
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="message">
                                         {selectedType === 'positive'
-                                            ? 'Beritahu kami apa yang anda suka'
-                                            : 'Beritahu kami apa yang perlu diperbaiki'}
+                                            ? t('feedback.form.messagePositive')
+                                            : t('feedback.form.messageImprovement')}
                                         *
                                     </Label>
                                     <Textarea
@@ -183,8 +185,8 @@ export default function FarmerFeedback() {
                                         onChange={(e) => setData('message', e.target.value)}
                                         placeholder={
                                             selectedType === 'positive'
-                                                ? 'Contoh: Bahan pembelajaran sangat membantu dan mudah difahami...'
-                                                : 'Contoh: Sistem pelaporan agak mengelirukan untuk digunakan. Akan lebih baik jika...'
+                                                ? t('feedback.form.placeholderPositive')
+                                                : t('feedback.form.placeholderImprovement')
                                         }
                                         rows={6}
                                         required
@@ -200,7 +202,7 @@ export default function FarmerFeedback() {
                                         disabled={processing}
                                         className="bg-green-600 hover:bg-green-700"
                                     >
-                                        {processing ? 'Menghantar...' : 'Hantar Maklum Balas'}
+                                        {processing ? t('feedback.form.submitting') : t('feedback.form.submit')}
                                     </Button>
                                     <Button
                                         type="button"
@@ -210,7 +212,7 @@ export default function FarmerFeedback() {
                                             reset();
                                         }}
                                     >
-                                        Batal
+                                        {t('feedback.form.cancel')}
                                     </Button>
                                 </div>
                             </form>
@@ -221,7 +223,7 @@ export default function FarmerFeedback() {
                 {/* How Your Feedback Helps */}
                 <div className="max-w-6xl mx-auto mt-12">
                     <h2 className="text-2xl font-semibold text-center mb-8">
-                        Bagaimana Maklum Balas Anda Membantu
+                        {t('feedback.howHelps.title')}
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <Card>
@@ -231,9 +233,9 @@ export default function FarmerFeedback() {
                                         <Target className="h-8 w-8 text-blue-600" />
                                     </div>
                                 </div>
-                                <h3 className="text-lg font-semibold mb-2">Perbaiki Ciri</h3>
+                                <h3 className="text-lg font-semibold mb-2">{t('feedback.howHelps.improveFeatures')}</h3>
                                 <p className="text-sm text-gray-600">
-                                    Maklum balas anda membantu kami mengenal pasti ciri yang berfungsi dengan baik dan yang perlu diperbaiki.
+                                    {t('feedback.howHelps.improveFeaturesDesc')}
                                 </p>
                             </CardContent>
                         </Card>
@@ -245,9 +247,9 @@ export default function FarmerFeedback() {
                                         <Zap className="h-8 w-8 text-purple-600" />
                                     </div>
                                 </div>
-                                <h3 className="text-lg font-semibold mb-2">Tambah Ciri Baru</h3>
+                                <h3 className="text-lg font-semibold mb-2">{t('feedback.howHelps.addFeatures')}</h3>
                                 <p className="text-sm text-gray-600">
-                                    Kami pertimbangkan cadangan anda apabila membangunkan ciri baharu untuk AgriPadi.
+                                    {t('feedback.howHelps.addFeaturesDesc')}
                                 </p>
                             </CardContent>
                         </Card>
@@ -259,9 +261,9 @@ export default function FarmerFeedback() {
                                         <Award className="h-8 w-8 text-green-600" />
                                     </div>
                                 </div>
-                                <h3 className="text-lg font-semibold mb-2">Pengalaman Lebih Baik</h3>
+                                <h3 className="text-lg font-semibold mb-2">{t('feedback.howHelps.betterExperience')}</h3>
                                 <p className="text-sm text-gray-600">
-                                    Input anda secara langsung menyumbang untuk menjadikan AgriPadi lebih mesra pengguna.
+                                    {t('feedback.howHelps.betterExperienceDesc')}
                                 </p>
                             </CardContent>
                         </Card>

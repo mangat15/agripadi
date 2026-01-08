@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\LearningMaterialController;
-use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\FeedbackController;
@@ -86,11 +85,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/announcements', [AnnouncementController::class, 'farmerIndex'])->name('announcements');
 
         Route::get('/learning', [LearningMaterialController::class, 'farmerIndex'])->name('learning');
-
-        Route::get('/quiz', [QuizController::class, 'farmerIndex'])->name('quiz');
-        Route::get('/quiz/{quiz}', [QuizController::class, 'show'])->name('quiz.show');
-        Route::post('/quiz/{quiz}/submit', [QuizController::class, 'submit'])->name('quiz.submit');
-        Route::get('/quiz-result/{attempt}', [QuizController::class, 'result'])->name('quiz.result');
 
         Route::get('/virtual-tour', [VirtualTourController::class, 'farmerIndex'])->name('virtual-tour');
 
@@ -179,13 +173,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/learning', [LearningMaterialController::class, 'adminIndex'])->name('learning');
         Route::post('/learning', [LearningMaterialController::class, 'store'])->name('learning.store');
         Route::delete('/learning/{material}', [LearningMaterialController::class, 'destroy'])->name('learning.destroy');
-
-        Route::get('/quiz', [QuizController::class, 'adminIndex'])->name('quiz');
-        Route::get('/quiz/create', [QuizController::class, 'create'])->name('quiz.create');
-        Route::post('/quiz', [QuizController::class, 'store'])->name('quiz.store');
-        Route::get('/quiz/{quiz}/edit', [QuizController::class, 'edit'])->name('quiz.edit');
-        Route::put('/quiz/{quiz}', [QuizController::class, 'update'])->name('quiz.update');
-        Route::delete('/quiz/{quiz}', [QuizController::class, 'destroy'])->name('quiz.destroy');
 
         Route::get('/virtual-tour', [VirtualTourController::class, 'adminIndex'])->name('virtual-tour');
         Route::post('/virtual-tour', [VirtualTourController::class, 'store'])->name('virtual-tour.store');

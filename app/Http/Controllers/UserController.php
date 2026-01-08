@@ -16,6 +16,7 @@ class UserController extends Controller
                 'user_id' => $user->user_id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'phone' => $user->phone,
                 'role' => $user->role, // 0 = farmer, 1 = admin
                 'role_label' => $user->role === 1 ? 'admin' : 'farmer', // For display
                 'location' => $user->location ?? '-',
@@ -35,6 +36,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:20|regex:/^[0-9\-\+\(\)\s]+$/',
             'password' => 'required|string|min:8',
             'role' => 'required|in:0,1,admin,farmer', // Accept both formats
             'location' => 'nullable|string|max:255',
@@ -48,6 +50,7 @@ class UserController extends Controller
         User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'password' => Hash::make($validated['password']),
             'role' => $role,
             'location' => $validated['location'] ?? null,
@@ -62,6 +65,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->user_id . ',user_id',
+            'phone' => 'required|string|max:20|regex:/^[0-9\-\+\(\)\s]+$/',
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:0,1,admin,farmer', // Accept both formats
             'location' => 'nullable|string|max:255',
@@ -75,6 +79,7 @@ class UserController extends Controller
         $updateData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'role' => $role,
             'location' => $validated['location'] ?? null,
         ];

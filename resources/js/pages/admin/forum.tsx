@@ -24,6 +24,7 @@ import {
     User,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface User {
     id: number;
@@ -61,6 +62,7 @@ interface Props {
 type FilterStatus = 'all' | 'pending' | 'approved' | 'rejected';
 
 export default function AdminForum({ forums, stats }: Props) {
+    const { t, language } = useLanguage();
     const [activeFilter, setActiveFilter] = useState<FilterStatus>('all');
     const [selectedForum, setSelectedForum] = useState<Forum | null>(null);
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
@@ -73,7 +75,7 @@ export default function AdminForum({ forums, stats }: Props) {
     });
 
     const handleApprove = (forumId: number) => {
-        if (confirm('Adakah anda pasti mahu meluluskan forum ini?')) {
+        if (confirm(t('adminForum.approveConfirm'))) {
             router.post(`/admin/forum/${forumId}/approve`);
         }
     };
@@ -98,7 +100,7 @@ export default function AdminForum({ forums, stats }: Props) {
     };
 
     const handleDelete = (forumId: number) => {
-        if (confirm('Adakah anda pasti mahu memadam forum ini? Tindakan ini tidak boleh dibatalkan.')) {
+        if (confirm(t('adminForum.deleteConfirm'))) {
             router.delete(`/admin/forum/${forumId}`);
         }
     };
@@ -109,7 +111,7 @@ export default function AdminForum({ forums, stats }: Props) {
     };
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ms-MY', {
+        return new Date(dateString).toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -121,24 +123,24 @@ export default function AdminForum({ forums, stats }: Props) {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'pending':
-                return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Menunggu</Badge>;
+                return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">{t('adminForum.status.pending')}</Badge>;
             case 'approved':
-                return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Diluluskan</Badge>;
+                return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{t('adminForum.status.approved')}</Badge>;
             case 'rejected':
-                return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Ditolak</Badge>;
+                return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">{t('adminForum.status.rejected')}</Badge>;
             default:
                 return null;
         }
     };
 
     return (
-        <AdminSidebarLayout breadcrumbs={[{ title: 'Pengurusan Forum', href: '/admin/forum' }]}>
+        <AdminSidebarLayout breadcrumbs={[{ title: t('adminForum.title'), href: '/admin/forum' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Pengurusan Forum</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">{t('adminForum.title')}</h1>
                     <p className="text-sm text-gray-600 mt-1">
-                        Urus dan semak forum yang dihantar oleh petani
+                        {t('adminForum.subtitle')}
                     </p>
                 </div>
 
@@ -148,7 +150,7 @@ export default function AdminForum({ forums, stats }: Props) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Jumlah Forum</p>
+                                    <p className="text-sm text-gray-600">{t('adminForum.stats.total')}</p>
                                     <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
                                 </div>
                                 <MessageSquare className="h-8 w-8 text-gray-400" />
@@ -160,7 +162,7 @@ export default function AdminForum({ forums, stats }: Props) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Menunggu</p>
+                                    <p className="text-sm text-gray-600">{t('adminForum.stats.pending')}</p>
                                     <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
                                 </div>
                                 <Clock className="h-8 w-8 text-yellow-400" />
@@ -172,7 +174,7 @@ export default function AdminForum({ forums, stats }: Props) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Diluluskan</p>
+                                    <p className="text-sm text-gray-600">{t('adminForum.stats.approved')}</p>
                                     <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
                                 </div>
                                 <CheckCircle className="h-8 w-8 text-green-400" />
@@ -184,7 +186,7 @@ export default function AdminForum({ forums, stats }: Props) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Ditolak</p>
+                                    <p className="text-sm text-gray-600">{t('adminForum.stats.rejected')}</p>
                                     <p className="text-2xl font-bold text-red-600">{stats.rejected}</p>
                                 </div>
                                 <XCircle className="h-8 w-8 text-red-400" />
@@ -203,7 +205,7 @@ export default function AdminForum({ forums, stats }: Props) {
                                 : 'text-gray-600 hover:text-gray-900'
                         }`}
                     >
-                        Semua ({stats.total})
+                        {t('adminForum.filter.all')} ({stats.total})
                     </button>
                     <button
                         onClick={() => setActiveFilter('pending')}
@@ -213,7 +215,7 @@ export default function AdminForum({ forums, stats }: Props) {
                                 : 'text-gray-600 hover:text-gray-900'
                         }`}
                     >
-                        Menunggu ({stats.pending})
+                        {t('adminForum.filter.pending')} ({stats.pending})
                     </button>
                     <button
                         onClick={() => setActiveFilter('approved')}
@@ -223,7 +225,7 @@ export default function AdminForum({ forums, stats }: Props) {
                                 : 'text-gray-600 hover:text-gray-900'
                         }`}
                     >
-                        Diluluskan ({stats.approved})
+                        {t('adminForum.filter.approved')} ({stats.approved})
                     </button>
                     <button
                         onClick={() => setActiveFilter('rejected')}
@@ -233,7 +235,7 @@ export default function AdminForum({ forums, stats }: Props) {
                                 : 'text-gray-600 hover:text-gray-900'
                         }`}
                     >
-                        Ditolak ({stats.rejected})
+                        {t('adminForum.filter.rejected')} ({stats.rejected})
                     </button>
                 </div>
 
@@ -243,7 +245,7 @@ export default function AdminForum({ forums, stats }: Props) {
                         <Card>
                             <CardContent className="py-12 text-center text-gray-500">
                                 <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                                <p>Tiada forum dijumpai</p>
+                                <p>{t('adminForum.noForums')}</p>
                             </CardContent>
                         </Card>
                     ) : (
@@ -286,7 +288,7 @@ export default function AdminForum({ forums, stats }: Props) {
                                             {forum.status === 'rejected' && forum.rejection_reason && (
                                                 <div className="bg-red-50 border border-red-200 rounded p-3 mb-3">
                                                     <p className="text-sm font-medium text-red-800 mb-1">
-                                                        Sebab Ditolak:
+                                                        {t('adminForum.rejectionReason')}
                                                     </p>
                                                     <p className="text-sm text-red-700">
                                                         {forum.rejection_reason}
@@ -298,11 +300,11 @@ export default function AdminForum({ forums, stats }: Props) {
                                             <div className="flex items-center gap-4 text-sm text-gray-600">
                                                 <div className="flex items-center gap-1">
                                                     <ThumbsUp className="h-4 w-4" />
-                                                    <span>{forum.likes_count} Suka</span>
+                                                    <span>{forum.likes_count} {t('adminForum.likes')}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1">
                                                     <MessageCircle className="h-4 w-4" />
-                                                    <span>{forum.comments_count} Komen</span>
+                                                    <span>{forum.comments_count} {t('adminForum.comments')}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -314,7 +316,7 @@ export default function AdminForum({ forums, stats }: Props) {
                                                 size="sm"
                                                 onClick={() => handleViewDetails(forum)}
                                             >
-                                                Lihat Penuh
+                                                {t('adminForum.viewFull')}
                                             </Button>
 
                                             {forum.status === 'pending' && (
@@ -325,7 +327,7 @@ export default function AdminForum({ forums, stats }: Props) {
                                                         className="bg-green-600 hover:bg-green-700"
                                                     >
                                                         <CheckCircle className="h-4 w-4 mr-1" />
-                                                        Luluskan
+                                                        {t('adminForum.approve')}
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -334,7 +336,7 @@ export default function AdminForum({ forums, stats }: Props) {
                                                         className="border-red-300 text-red-600 hover:bg-red-50"
                                                     >
                                                         <XCircle className="h-4 w-4 mr-1" />
-                                                        Tolak
+                                                        {t('adminForum.reject')}
                                                     </Button>
                                                 </>
                                             )}
@@ -346,7 +348,7 @@ export default function AdminForum({ forums, stats }: Props) {
                                                 className="border-red-300 text-red-600 hover:bg-red-50"
                                             >
                                                 <Trash2 className="h-4 w-4 mr-1" />
-                                                Padam
+                                                {t('adminForum.delete')}
                                             </Button>
                                         </div>
                                     </div>
@@ -393,7 +395,7 @@ export default function AdminForum({ forums, stats }: Props) {
                             {selectedForum.status === 'rejected' && selectedForum.rejection_reason && (
                                 <div className="bg-red-50 border border-red-200 rounded p-3">
                                     <p className="text-sm font-medium text-red-800 mb-1">
-                                        Sebab Ditolak:
+                                        {t('adminForum.rejectionReason')}
                                     </p>
                                     <p className="text-sm text-red-700">
                                         {selectedForum.rejection_reason}
@@ -404,11 +406,11 @@ export default function AdminForum({ forums, stats }: Props) {
                             <div className="flex items-center gap-6 pt-4 border-t">
                                 <div className="flex items-center gap-2 text-gray-600">
                                     <ThumbsUp className="h-5 w-5" />
-                                    <span>{selectedForum.likes_count} Suka</span>
+                                    <span>{selectedForum.likes_count} {t('adminForum.likes')}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-gray-600">
                                     <MessageCircle className="h-5 w-5" />
-                                    <span>{selectedForum.comments_count} Komen</span>
+                                    <span>{selectedForum.comments_count} {t('adminForum.comments')}</span>
                                 </div>
                             </div>
                         </div>
@@ -420,19 +422,19 @@ export default function AdminForum({ forums, stats }: Props) {
             <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Tolak Forum</DialogTitle>
+                        <DialogTitle>{t('adminForum.form.rejectTitle')}</DialogTitle>
                         <DialogDescription>
-                            Sila berikan sebab penolakan forum ini (pilihan)
+                            {t('adminForum.form.rejectDescription')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div className="space-y-2">
-                            <Label htmlFor="rejection_reason">Sebab Penolakan (Pilihan)</Label>
+                            <Label htmlFor="rejection_reason">{t('adminForum.form.rejectionReasonLabel')}</Label>
                             <Textarea
                                 id="rejection_reason"
                                 value={rejectionReason}
                                 onChange={(e) => setRejectionReason(e.target.value)}
-                                placeholder="Contoh: Kandungan tidak sesuai atau melanggar garis panduan komuniti"
+                                placeholder={t('adminForum.form.rejectionReasonPlaceholder')}
                                 rows={4}
                             />
                         </div>
@@ -445,13 +447,13 @@ export default function AdminForum({ forums, stats }: Props) {
                                 setRejectionReason('');
                             }}
                         >
-                            Batal
+                            {t('adminForum.form.cancel')}
                         </Button>
                         <Button
                             onClick={handleRejectSubmit}
                             className="bg-red-600 hover:bg-red-700"
                         >
-                            Tolak Forum
+                            {t('adminForum.form.rejectButton')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

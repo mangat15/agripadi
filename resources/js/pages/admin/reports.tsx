@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Eye } from 'lucide-react';
 import { router } from '@inertiajs/react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface User {
     id: number;
@@ -40,6 +41,7 @@ interface Props {
 }
 
 export default function AdminReports({ reports }: Props) {
+    const { t, language } = useLanguage();
     const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'resolved'>('all');
 
     const filteredReports = reports.filter((report) => {
@@ -50,7 +52,7 @@ export default function AdminReports({ reports }: Props) {
     });
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ms-MY', {
+        return new Date(dateString).toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -62,19 +64,19 @@ export default function AdminReports({ reports }: Props) {
             case 'pending':
                 return (
                     <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
-                        Menunggu
+                        {t('adminReports.status.pending')}
                     </span>
                 );
             case 'under_review':
                 return (
                     <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
-                        Dalam Semakan
+                        {t('adminReports.status.underReview')}
                     </span>
                 );
             case 'resolved':
                 return (
                     <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
-                        Selesai
+                        {t('adminReports.status.resolved')}
                     </span>
                 );
             default:
@@ -90,13 +92,13 @@ export default function AdminReports({ reports }: Props) {
     const resolvedCount = reports.filter((r) => r.status === 'resolved').length;
 
     return (
-        <AdminSidebarLayout breadcrumbs={[{ title: 'Pengurusan Laporan', href: '/admin/reports' }]}>
+        <AdminSidebarLayout breadcrumbs={[{ title: t('adminReports.title'), href: '/admin/reports' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Pengurusan Laporan Petani</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">{t('adminReports.title')}</h1>
                     <p className="text-sm text-gray-600 mt-1">
-                        Urus dan balas laporan daripada petani
+                        {t('adminReports.subtitle')}
                     </p>
                 </div>
 
@@ -111,7 +113,7 @@ export default function AdminReports({ reports }: Props) {
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                             }`}
                         >
-                            Semua Laporan ({reports.length})
+                            {t('adminReports.tab.all')} ({reports.length})
                         </button>
                         <button
                             onClick={() => setActiveTab('pending')}
@@ -121,7 +123,7 @@ export default function AdminReports({ reports }: Props) {
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                             }`}
                         >
-                            Menunggu ({pendingCount})
+                            {t('adminReports.tab.pending')} ({pendingCount})
                         </button>
                         <button
                             onClick={() => setActiveTab('resolved')}
@@ -131,7 +133,7 @@ export default function AdminReports({ reports }: Props) {
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                             }`}
                         >
-                            Selesai ({resolvedCount})
+                            {t('adminReports.tab.resolved')} ({resolvedCount})
                         </button>
                     </nav>
                 </div>
@@ -140,28 +142,28 @@ export default function AdminReports({ reports }: Props) {
                 <Card>
                     <CardHeader>
                         <CardTitle>
-                            {activeTab === 'all' && 'Semua Laporan'}
-                            {activeTab === 'pending' && 'Laporan Menunggu'}
-                            {activeTab === 'resolved' && 'Laporan Selesai'}
+                            {activeTab === 'all' && t('adminReports.cardTitle.all')}
+                            {activeTab === 'pending' && t('adminReports.cardTitle.pending')}
+                            {activeTab === 'resolved' && t('adminReports.cardTitle.resolved')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Laporan</TableHead>
-                                    <TableHead>Petani</TableHead>
-                                    <TableHead>Jenis</TableHead>
-                                    <TableHead>Tarikh</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">Tindakan</TableHead>
+                                    <TableHead>{t('adminReports.table.report')}</TableHead>
+                                    <TableHead>{t('adminReports.table.farmer')}</TableHead>
+                                    <TableHead>{t('adminReports.table.type')}</TableHead>
+                                    <TableHead>{t('adminReports.table.date')}</TableHead>
+                                    <TableHead>{t('adminReports.table.status')}</TableHead>
+                                    <TableHead className="text-right">{t('adminReports.table.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {filteredReports.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                                            Tiada laporan dijumpai
+                                            {t('adminReports.noReports')}
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -180,7 +182,7 @@ export default function AdminReports({ reports }: Props) {
                                                     className="hover:bg-green-50 hover:text-green-600"
                                                 >
                                                     <Eye className="h-4 w-4 mr-2" />
-                                                    Lihat Butiran
+                                                    {t('adminReports.viewDetails')}
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

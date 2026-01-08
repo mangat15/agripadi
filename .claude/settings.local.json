@@ -1,18 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php artisan:*)",
-      "Bash(mv:*)",
-      "Bash(move \"c:\\FYP\\agripadi\\logo1.png\" \"c:\\FYP\\agripadi\\public\\logo1.png\")",
-      "Bash(cp:*)",
-      "Bash(rm:*)",
-      "Bash(git init:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "Bash(cat:*)"
-    ],
-    "deny": [],
-    "ask": []
+      "Bash(npm run build:*)",
+      "Bash(ssh:*)"
+    ]
   }
 }

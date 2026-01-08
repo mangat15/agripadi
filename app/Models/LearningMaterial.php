@@ -14,6 +14,7 @@ class LearningMaterial extends Model
         'category',
         'file_path',
         'video_url',
+        'quiz_url',
         'thumbnail',
         'uploaded_by',
     ];

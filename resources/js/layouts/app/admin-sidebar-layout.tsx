@@ -11,7 +11,7 @@ export default function AdminSidebarLayout({
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-100 via-slate-100/50 to-green-100/60">
             {/* Header at the top */}
             <AppSidebarHeader breadcrumbs={breadcrumbs} />
 
@@ -26,7 +26,7 @@ export default function AdminSidebarLayout({
                 </button>
 
                 <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-                <main className="flex-1 overflow-auto bg-gray-50">
+                <main className="flex-1 overflow-auto">
                     {children}
                 </main>
             </div>

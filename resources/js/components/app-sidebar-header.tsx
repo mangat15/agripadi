@@ -1,5 +1,6 @@
 import { usePage, Link } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
+import { LanguageSwitcherHeader } from '@/components/language-switcher-header';
 
 export function AppSidebarHeader() {
     const { unreadAnnouncementsCount, auth } = usePage().props as unknown as {
@@ -24,18 +25,24 @@ export function AppSidebarHeader() {
                 </div>
             </div>
 
-            {/* Notification Bell */}
-            <Link
-                href={notificationLink}
-                className="relative hover:bg-green-700 p-2 rounded-lg transition-colors"
-            >
-                <Bell className="h-6 w-6" />
-                {unreadAnnouncementsCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                        {unreadAnnouncementsCount > 9 ? '9+' : unreadAnnouncementsCount}
-                    </span>
-                )}
-            </Link>
+            {/* Right side actions */}
+            <div className="flex items-center gap-3">
+                {/* Language Switcher */}
+                <LanguageSwitcherHeader />
+
+                {/* Notification Bell */}
+                <Link
+                    href={notificationLink}
+                    className="relative hover:bg-green-700 p-2 rounded-lg transition-colors"
+                >
+                    <Bell className="h-6 w-6" />
+                    {unreadAnnouncementsCount > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                            {unreadAnnouncementsCount > 9 ? '9+' : unreadAnnouncementsCount}
+                        </span>
+                    )}
+                </Link>
+            </div>
         </header>
     );
 }

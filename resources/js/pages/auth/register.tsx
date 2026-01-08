@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AgripadiAuthLayout from '@/layouts/auth/agripadi-auth-layout';
-import { User, Mail, Lock } from 'lucide-react';
+import { User, Mail, Lock, Phone } from 'lucide-react';
 
 export default function Register() {
     return (
@@ -69,6 +69,26 @@ export default function Register() {
                             </div>
 
                             <div>
+                                <Label htmlFor="phone" className="text-gray-700">Nombor Telefon</Label>
+                                <div className="relative mt-1">
+                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <Phone className="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <Input
+                                        id="phone"
+                                        type="tel"
+                                        required
+                                        tabIndex={3}
+                                        autoComplete="tel"
+                                        name="phone"
+                                        placeholder="012-3456789"
+                                        className="pl-10"
+                                    />
+                                </div>
+                                <InputError message={errors.phone} />
+                            </div>
+
+                            <div>
                                 <Label htmlFor="password" className="text-gray-700">Kata Laluan</Label>
                                 <div className="relative mt-1">
                                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -78,7 +98,7 @@ export default function Register() {
                                         id="password"
                                         type="password"
                                         required
-                                        tabIndex={3}
+                                        tabIndex={4}
                                         autoComplete="new-password"
                                         name="password"
                                         placeholder="••••••••"
@@ -100,7 +120,7 @@ export default function Register() {
                                         id="password_confirmation"
                                         type="password"
                                         required
-                                        tabIndex={4}
+                                        tabIndex={5}
                                         autoComplete="new-password"
                                         name="password_confirmation"
                                         placeholder="••••••••"
@@ -113,7 +133,7 @@ export default function Register() {
                             <Button
                                 type="submit"
                                 className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-base font-medium mt-2"
-                                tabIndex={5}
+                                tabIndex={6}
                                 data-test="register-user-button"
                             >
                                 {processing && <Spinner />}
@@ -123,7 +143,7 @@ export default function Register() {
 
                         <div className="text-center text-sm text-gray-600 mt-4">
                             Sudah mempunyai akaun?{' '}
-                            <TextLink href={login()} tabIndex={6} className="text-green-600 hover:text-green-700 font-medium">
+                            <TextLink href={login()} tabIndex={7} className="text-green-600 hover:text-green-700 font-medium">
                                 Log masuk
                             </TextLink>
                         </div>

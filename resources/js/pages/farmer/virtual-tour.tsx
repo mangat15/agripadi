@@ -10,6 +10,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Camera, Play, Eye, ExternalLink } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface VirtualTour {
     id: number;
@@ -27,6 +28,7 @@ interface Props {
 export default function FarmerVirtualTour({ tours }: Props) {
     const [selectedTour, setSelectedTour] = useState<VirtualTour | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const { t } = useLanguage();
 
     const handleTourClick = (tour: VirtualTour) => {
         if (tour.tour_type === 'redirect') {
@@ -40,14 +42,14 @@ export default function FarmerVirtualTour({ tours }: Props) {
     };
 
     return (
-        <FarmerSidebarLayout breadcrumbs={[{ title: 'Lawatan Maya', href: '/farmer/virtual-tour' }]}>
+        <FarmerSidebarLayout breadcrumbs={[{ title: t('virtualTour.title'), href: '/farmer/virtual-tour' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Lawatan Maya 360°</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('virtualTour.title')}</h1>
                         <p className="text-sm text-gray-600 mt-1">
-                            Jelajahi ladang padi melalui lawatan maya interaktif
+                            {t('virtualTour.subtitle')}
                         </p>
                     </div>
                     <Camera className="h-8 w-8 text-green-600" />
@@ -59,7 +61,7 @@ export default function FarmerVirtualTour({ tours }: Props) {
                         <Card className="col-span-full">
                             <CardContent className="py-12 text-center text-gray-500">
                                 <Camera className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                                <p>Tiada lawatan maya pada masa ini</p>
+                                <p>{t('virtualTour.noTours')}</p>
                             </CardContent>
                         </Card>
                     ) : (
@@ -72,7 +74,7 @@ export default function FarmerVirtualTour({ tours }: Props) {
                                 <CardContent className="pt-6 space-y-3">
                                     {/* Tour Type Badge */}
                                     <Badge className={tour.tour_type === 'iframe' ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' : 'bg-purple-100 text-purple-800 hover:bg-purple-100'}>
-                                        360° Tour
+                                        {t('virtualTour.360Tour')}
                                     </Badge>
 
                                     {/* Thumbnail or Play Icon */}
@@ -117,12 +119,12 @@ export default function FarmerVirtualTour({ tours }: Props) {
                                         {tour.tour_type === 'iframe' ? (
                                             <>
                                                 <Eye className="h-4 w-4" />
-                                                Lihat Lawatan
+                                                {t('virtualTour.viewTour')}
                                             </>
                                         ) : (
                                             <>
                                                 <ExternalLink className="h-4 w-4" />
-                                                Buka Lawatan
+                                                {t('virtualTour.openTour')}
                                             </>
                                         )}
                                     </Button>
@@ -140,7 +142,7 @@ export default function FarmerVirtualTour({ tours }: Props) {
                         <DialogTitle className="flex items-center gap-2">
                             {selectedTour?.title}
                             <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-                                360° Tour
+                                {t('virtualTour.360Tour')}
                             </Badge>
                         </DialogTitle>
                     </DialogHeader>
@@ -166,18 +168,18 @@ export default function FarmerVirtualTour({ tours }: Props) {
 
                             {/* Instructions */}
                             <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-900">
-                                <p className="font-semibold mb-1">Panduan:</p>
+                                <p className="font-semibold mb-1">{t('virtualTour.instructions')}</p>
                                 <ul className="list-disc list-inside space-y-1">
-                                    <li>Gunakan tetikus untuk melihat sekeliling</li>
-                                    <li>Klik dan seret untuk berputar</li>
-                                    <li>Gunakan butang fullscreen untuk paparan penuh</li>
+                                    <li>{t('virtualTour.instructionMouse')}</li>
+                                    <li>{t('virtualTour.instructionDrag')}</li>
+                                    <li>{t('virtualTour.instructionFullscreen')}</li>
                                 </ul>
                             </div>
 
                             {/* Close Button */}
                             <div className="flex justify-end">
                                 <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                                    Tutup
+                                    {t('virtualTour.close')}
                                 </Button>
                             </div>
                         </div>

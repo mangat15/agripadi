@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
     Dialog,
     DialogContent,
@@ -59,6 +60,7 @@ interface Props {
 }
 
 export default function AdminVirtualTour({ tours, stats }: Props) {
+    const { t, language } = useLanguage();
     const [selectedTour, setSelectedTour] = useState<VirtualTour | null>(null);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -155,7 +157,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
     };
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ms-MY', {
+        return new Date(dateString).toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -163,19 +165,19 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
     };
 
     return (
-        <AdminSidebarLayout breadcrumbs={[{ title: 'Lawatan Maya', href: '/admin/virtual-tour' }]}>
+        <AdminSidebarLayout breadcrumbs={[{ title: t('adminVirtualTour.title'), href: '/admin/virtual-tour' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Lawatan Maya</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('adminVirtualTour.title')}</h1>
                         <p className="text-sm text-gray-600 mt-1">
-                            Urus lawatan maya 360° ladang padi
+                            {t('adminVirtualTour.subtitle')}
                         </p>
                     </div>
                     <Button onClick={() => setIsCreateDialogOpen(true)} className="gap-2">
                         <Plus className="h-4 w-4" />
-                        Tambah Lawatan
+                        {t('adminVirtualTour.createNew')}
                     </Button>
                 </div>
 
@@ -183,7 +185,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                 <div className="grid gap-4 md:grid-cols-3">
                     <Card>
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-medium text-gray-600">Jumlah Lawatan</CardTitle>
+                            <CardTitle className="text-sm font-medium text-gray-600">{t('adminVirtualTour.stats.total')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{stats.total}</div>
@@ -191,7 +193,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                     </Card>
                     <Card>
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-medium text-gray-600">Diterbitkan</CardTitle>
+                            <CardTitle className="text-sm font-medium text-gray-600">{t('adminVirtualTour.stats.published')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-green-600">{stats.published}</div>
@@ -199,7 +201,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                     </Card>
                     <Card>
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-medium text-gray-600">Draf</CardTitle>
+                            <CardTitle className="text-sm font-medium text-gray-600">{t('adminVirtualTour.stats.draft')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-gray-600">{stats.draft}</div>
@@ -213,7 +215,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                         <Card className="col-span-full">
                             <CardContent className="py-12 text-center text-gray-500">
                                 <Camera className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                                <p>Tiada lawatan maya</p>
+                                <p>{t('adminVirtualTour.noTours')}</p>
                             </CardContent>
                         </Card>
                     ) : (
@@ -223,17 +225,17 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                     {/* Tour Type Badge */}
                                     <div className="flex items-center justify-between">
                                         <Badge className={tour.tour_type === 'iframe' ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' : 'bg-purple-100 text-purple-800 hover:bg-purple-100'}>
-                                            {tour.tour_type === 'iframe' ? 'Embedded' : 'External Link'}
+                                            {tour.tour_type === 'iframe' ? t('adminVirtualTour.form.iframe') : t('adminVirtualTour.form.redirect')}
                                         </Badge>
                                         {tour.published_at ? (
                                             <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
                                                 <Eye className="h-3 w-3 mr-1" />
-                                                Published
+                                                {t('adminVirtualTour.status.published')}
                                             </Badge>
                                         ) : (
                                             <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">
                                                 <EyeOff className="h-3 w-3 mr-1" />
-                                                Draft
+                                                {t('adminVirtualTour.status.draft')}
                                             </Badge>
                                         )}
                                     </div>
@@ -269,7 +271,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                         </div>
                                         <div className="flex items-center gap-1">
                                             <User className="h-4 w-4" />
-                                            <span>Oleh: {tour.user.name}</span>
+                                            <span>{t('adminVirtualTour.by')}: {tour.user.name}</span>
                                         </div>
                                         <div className="flex items-center gap-1">
                                             <ExternalLink className="h-4 w-4" />
@@ -293,7 +295,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                             onClick={() => handleTogglePublish(tour)}
                                         >
                                             {tour.published_at ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
-                                            {tour.published_at ? 'Unpublish' : 'Publish'}
+                                            {tour.published_at ? t('adminVirtualTour.unpublish') : t('adminVirtualTour.publish')}
                                         </Button>
                                         <Button
                                             variant="outline"
@@ -322,35 +324,35 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>Tambah Lawatan Maya Baru</DialogTitle>
+                        <DialogTitle>{t('adminVirtualTour.form.createTitle')}</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleCreate} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="create-title">Tajuk *</Label>
+                            <Label htmlFor="create-title">{t('adminVirtualTour.form.title')} *</Label>
                             <Input
                                 id="create-title"
                                 value={createData.title}
                                 onChange={(e) => setCreateData('title', e.target.value)}
-                                placeholder="Contoh: Lawatan Maya Ladang MADA"
+                                placeholder={t('adminVirtualTour.form.titlePlaceholder')}
                                 required
                             />
                             {createErrors.title && <p className="text-sm text-red-600">{createErrors.title}</p>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="create-description">Penerangan</Label>
+                            <Label htmlFor="create-description">{t('adminVirtualTour.form.description')}</Label>
                             <Textarea
                                 id="create-description"
                                 value={createData.description}
                                 onChange={(e) => setCreateData('description', e.target.value)}
-                                placeholder="Keterangan mengenai lawatan maya"
+                                placeholder={t('adminVirtualTour.form.descriptionPlaceholder')}
                                 rows={4}
                             />
                             {createErrors.description && <p className="text-sm text-red-600">{createErrors.description}</p>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="create-tour_url">URL Lawatan Maya *</Label>
+                            <Label htmlFor="create-tour_url">{t('adminVirtualTour.form.url')} *</Label>
                             <Input
                                 id="create-tour_url"
                                 value={createData.tour_url}
@@ -358,12 +360,12 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                 placeholder="https://..."
                                 required
                             />
-                            <p className="text-xs text-gray-500">Masukkan URL lawatan maya (contoh: dari Kuula, Roundme, atau A-Frame)</p>
+                            <p className="text-xs text-gray-500">{t('adminVirtualTour.form.urlHint')}</p>
                             {createErrors.tour_url && <p className="text-sm text-red-600">{createErrors.tour_url}</p>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="create-tour_type">Jenis Paparan *</Label>
+                            <Label htmlFor="create-tour_type">{t('adminVirtualTour.form.displayType')} *</Label>
                             <Select
                                 value={createData.tour_type}
                                 onValueChange={(value) => setCreateData('tour_type', value as 'iframe' | 'redirect')}
@@ -372,17 +374,17 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="iframe">Embedded (iframe)</SelectItem>
-                                    <SelectItem value="redirect">External Link (redirect)</SelectItem>
+                                    <SelectItem value="iframe">{t('adminVirtualTour.form.iframe')}</SelectItem>
+                                    <SelectItem value="redirect">{t('adminVirtualTour.form.redirect')}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <p className="text-xs text-gray-500">
-                                Iframe: Dipaparkan dalam sistem | Redirect: Buka dalam tab baru
+                                {t('adminVirtualTour.form.displayTypeHint')}
                             </p>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="create-thumbnail">Gambar Thumbnail (Opsional)</Label>
+                            <Label htmlFor="create-thumbnail">{t('adminVirtualTour.form.thumbnail')}</Label>
                             <Input
                                 id="create-thumbnail"
                                 type="file"
@@ -401,7 +403,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                 className="rounded"
                             />
                             <Label htmlFor="create-publish_now" className="cursor-pointer">
-                                Terbitkan sekarang
+                                {t('adminVirtualTour.form.publishNow')}
                             </Label>
                         </div>
 
@@ -414,10 +416,10 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                     resetCreate();
                                 }}
                             >
-                                Batal
+                                {t('adminVirtualTour.cancel')}
                             </Button>
                             <Button type="submit" disabled={createProcessing}>
-                                {createProcessing ? 'Menyimpan...' : 'Simpan'}
+                                {createProcessing ? t('adminVirtualTour.saving') : t('adminVirtualTour.save')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -428,12 +430,12 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>Edit Lawatan Maya</DialogTitle>
+                        <DialogTitle>{t('adminVirtualTour.form.editTitle')}</DialogTitle>
                     </DialogHeader>
                     {selectedTour && (
                         <form onSubmit={handleEdit} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="edit-title">Tajuk *</Label>
+                                <Label htmlFor="edit-title">{t('adminVirtualTour.form.title')} *</Label>
                                 <Input
                                     id="edit-title"
                                     value={editData.title}
@@ -444,7 +446,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="edit-description">Penerangan</Label>
+                                <Label htmlFor="edit-description">{t('adminVirtualTour.form.description')}</Label>
                                 <Textarea
                                     id="edit-description"
                                     value={editData.description}
@@ -455,7 +457,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="edit-tour_url">URL Lawatan Maya *</Label>
+                                <Label htmlFor="edit-tour_url">{t('adminVirtualTour.form.url')} *</Label>
                                 <Input
                                     id="edit-tour_url"
                                     value={editData.tour_url}
@@ -466,7 +468,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="edit-tour_type">Jenis Paparan *</Label>
+                                <Label htmlFor="edit-tour_type">{t('adminVirtualTour.form.displayType')} *</Label>
                                 <Select
                                     value={editData.tour_type}
                                     onValueChange={(value) => setEditData('tour_type', value as 'iframe' | 'redirect')}
@@ -475,14 +477,14 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="iframe">Embedded (iframe)</SelectItem>
-                                        <SelectItem value="redirect">External Link (redirect)</SelectItem>
+                                        <SelectItem value="iframe">{t('adminVirtualTour.form.iframe')}</SelectItem>
+                                        <SelectItem value="redirect">{t('adminVirtualTour.form.redirect')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="edit-thumbnail">Gambar Thumbnail Baru (Opsional)</Label>
+                                <Label htmlFor="edit-thumbnail">{t('adminVirtualTour.form.thumbnailNew')}</Label>
                                 <Input
                                     id="edit-thumbnail"
                                     type="file"
@@ -491,7 +493,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                 />
                                 {selectedTour.thumbnail && (
                                     <div className="mt-2">
-                                        <p className="text-xs text-gray-500 mb-1">Thumbnail semasa:</p>
+                                        <p className="text-xs text-gray-500 mb-1">{t('adminVirtualTour.form.currentThumbnail')}:</p>
                                         <img
                                             src={`/storage/${selectedTour.thumbnail}`}
                                             alt="Current thumbnail"
@@ -511,7 +513,7 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                     className="rounded"
                                 />
                                 <Label htmlFor="edit-publish_now" className="cursor-pointer">
-                                    Terbitkan sekarang
+                                    {t('adminVirtualTour.form.publishNow')}
                                 </Label>
                             </div>
 
@@ -524,10 +526,10 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                         setSelectedTour(null);
                                     }}
                                 >
-                                    Batal
+                                    {t('adminVirtualTour.cancel')}
                                 </Button>
                                 <Button type="submit" disabled={editProcessing}>
-                                    {editProcessing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                    {editProcessing ? t('adminVirtualTour.saving') : t('adminVirtualTour.saveChanges')}
                                 </Button>
                             </DialogFooter>
                         </form>
@@ -539,10 +541,10 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Padam Lawatan Maya</DialogTitle>
+                        <DialogTitle>{t('adminVirtualTour.deleteTitle')}</DialogTitle>
                     </DialogHeader>
                     <p className="text-sm text-gray-600">
-                        Adakah anda pasti mahu memadam lawatan maya ini? Tindakan ini tidak boleh dibatalkan.
+                        {t('adminVirtualTour.deleteConfirm')}
                     </p>
                     <DialogFooter>
                         <Button
@@ -552,10 +554,10 @@ export default function AdminVirtualTour({ tours, stats }: Props) {
                                 setSelectedTour(null);
                             }}
                         >
-                            Batal
+                            {t('adminVirtualTour.cancel')}
                         </Button>
                         <Button variant="destructive" onClick={handleDelete}>
-                            Padam
+                            {t('adminVirtualTour.delete')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

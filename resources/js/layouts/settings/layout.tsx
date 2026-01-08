@@ -1,39 +1,16 @@
-import Heading from '@/components/heading';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { cn, isSameUrl, resolveUrl } from '@/lib/utils';
-import { edit as editAppearance } from '@/routes/appearance';
 import { edit } from '@/routes/profile';
-import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
-
-const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: edit(),
-        icon: null,
-    },
-    {
-        title: 'Password',
-        href: editPassword(),
-        icon: null,
-    },
-    {
-        title: 'Two-Factor Auth',
-        href: show(),
-        icon: null,
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
-        icon: null,
-    },
-];
+import { ArrowLeft } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { AppSidebarHeader } from '@/components/app-sidebar-header';
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
+    const { t } = useLanguage();
+
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
         return null;
@@ -41,44 +18,71 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
     const currentPath = window.location.pathname;
 
-    return (
-        <div className="px-4 py-6">
-            <Heading
-                title="Settings"
-                description="Manage your profile and account settings"
-            />
+    const sidebarNavItems: NavItem[] = [
+        {
+            title: t('settings.tabs.profile'),
+            href: edit(),
+            icon: null,
+        },
+        {
+            title: t('settings.tabs.password'),
+            href: editPassword(),
+            icon: null,
+        },
+    ];
 
-            <div className="flex flex-col lg:flex-row lg:space-x-12">
-                <aside className="w-full max-w-xl lg:w-48">
-                    <nav className="flex flex-col space-y-1 space-x-0">
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-gray-50 to-green-100/50">
+            {/* Header */}
+            <AppSidebarHeader />
+
+            {/* Content */}
+            <div className="w-full px-6 py-6">
+                {/* Back to Dashboard Button */}
+                <div className="mb-6">
+                    <button
+                        onClick={() => router.visit('/dashboard')}
+                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        {t('settings.backToDashboard')}
+                    </button>
+                </div>
+
+                <div className="mb-6">
+                    <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
+                    <p className="text-gray-600 mt-1">{t('settings.description')}</p>
+                </div>
+
+                {/* Settings Tabs */}
+                <div className="mb-8">
+                    <nav className="flex space-x-4 border-b">
                         {sidebarNavItems.map((item, index) => (
-                            <Button
+                            <Link
                                 key={`${resolveUrl(item.href)}-${index}`}
-                                size="sm"
-                                variant="ghost"
-                                asChild
-                                className={cn('w-full justify-start', {
-                                    'bg-muted': isSameUrl(
-                                        currentPath,
-                                        item.href,
-                                    ),
-                                })}
+                                href={item.href}
+                                className={cn(
+                                    'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
+                                    {
+                                        'border-green-600 text-green-600': isSameUrl(
+                                            currentPath,
+                                            item.href,
+                                        ),
+                                        'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300': !isSameUrl(
+                                            currentPath,
+                                            item.href,
+                                        ),
+                                    }
+                                )}
                             >
-                                <Link href={item.href}>
-                                    {item.icon && (
-                                        <item.icon className="h-4 w-4" />
-                                    )}
-                                    {item.title}
-                                </Link>
-                            </Button>
+                                {item.title}
+                            </Link>
                         ))}
                     </nav>
-                </aside>
+                </div>
 
-                <Separator className="my-6 lg:hidden" />
-
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">
+                <div className="bg-white rounded-lg shadow p-6">
+                    <section className="space-y-12">
                         {children}
                     </section>
                 </div>

@@ -9,6 +9,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import {Calendar, User } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface User {
     id: number;
@@ -36,6 +37,7 @@ interface Props {
 export default function FarmerAnnouncements({ announcements }: Props) {
     const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const { t, language } = useLanguage();
 
     const handleAnnouncementClick = (announcement: Announcement) => {
         setSelectedAnnouncement(announcement);
@@ -43,7 +45,7 @@ export default function FarmerAnnouncements({ announcements }: Props) {
     };
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ms-MY', {
+        return new Date(dateString).toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -51,14 +53,14 @@ export default function FarmerAnnouncements({ announcements }: Props) {
     };
 
     return (
-        <FarmerSidebarLayout breadcrumbs={[{ title: 'Pengumuman', href: '/farmer/announcements' }]}>
+        <FarmerSidebarLayout breadcrumbs={[{ title: t('announcements.title'), href: '/farmer/announcements' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Pengumuman</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('announcements.title')}</h1>
                         <p className="text-sm text-gray-600 mt-1">
-                            Kekal dikemaskini dengan berita dan pengumuman terkini
+                            {t('announcements.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -68,7 +70,7 @@ export default function FarmerAnnouncements({ announcements }: Props) {
                     {announcements.length === 0 ? (
                         <Card className="col-span-full">
                             <CardContent className="py-12 text-center text-gray-500">
-                                <p>Tiada pengumuman pada masa ini</p>
+                                <p>{t('announcements.noAnnouncements')}</p>
                             </CardContent>
                         </Card>
                     ) : (
@@ -115,7 +117,7 @@ export default function FarmerAnnouncements({ announcements }: Props) {
                                         </div>
                                         <div className="flex items-center gap-1">
                                             <User className="h-4 w-4" />
-                                            <span>Oleh: {announcement.user.name}</span>
+                                            <span>{t('announcements.by')}: {announcement.user.name}</span>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -148,7 +150,7 @@ export default function FarmerAnnouncements({ announcements }: Props) {
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <User className="h-4 w-4" />
-                                    <span>Oleh: {selectedAnnouncement.user.name}</span>
+                                    <span>{t('announcements.by')}: {selectedAnnouncement.user.name}</span>
                                 </div>
                             </div>
 

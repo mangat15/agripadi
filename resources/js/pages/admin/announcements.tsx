@@ -25,6 +25,7 @@ import {
     EyeOff,
 } from 'lucide-react';
 import { useForm, router } from '@inertiajs/react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface User {
     id: number;
@@ -57,6 +58,7 @@ interface Props {
 }
 
 export default function AdminAnnouncements({ announcements, stats }: Props) {
+    const { t, language } = useLanguage();
     const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -129,7 +131,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
     };
 
     const handleDelete = (announcementId: number) => {
-        if (confirm('Adakah anda pasti mahu memadam pengumuman ini?')) {
+        if (confirm(t('adminAnnouncements.deleteConfirm'))) {
             router.delete(`/admin/announcements/${announcementId}`);
         }
     };
@@ -144,7 +146,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
     };
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ms-MY', {
+        return new Date(dateString).toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -152,14 +154,14 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
     };
 
     return (
-        <AdminSidebarLayout breadcrumbs={[{ title: 'Pengumuman', href: '/admin/announcements' }]}>
+        <AdminSidebarLayout breadcrumbs={[{ title: t('adminAnnouncements.title'), href: '/admin/announcements' }]}>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Pengurusan Pengumuman</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('adminAnnouncements.title')}</h1>
                         <p className="text-sm text-gray-600 mt-1">
-                            Cipta dan urus pengumuman untuk petani
+                            {t('adminAnnouncements.subtitle')}
                         </p>
                     </div>
                     <Button
@@ -167,7 +169,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                         className="bg-green-600 hover:bg-green-700"
                     >
                         <Plus className="h-4 w-4 mr-2" />
-                        Cipta Pengumuman
+                        {t('adminAnnouncements.createNew')}
                     </Button>
                 </div>
 
@@ -177,7 +179,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Jumlah Pengumuman</p>
+                                    <p className="text-sm text-gray-600">{t('adminAnnouncements.stats.total')}</p>
                                     <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
                                 </div>
                                 <Bell className="h-8 w-8 text-gray-400" />
@@ -189,7 +191,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Diterbitkan</p>
+                                    <p className="text-sm text-gray-600">{t('adminAnnouncements.stats.published')}</p>
                                     <p className="text-2xl font-bold text-green-600">{stats.published}</p>
                                 </div>
                                 <Eye className="h-8 w-8 text-green-400" />
@@ -201,7 +203,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600">Draf</p>
+                                    <p className="text-sm text-gray-600">{t('adminAnnouncements.stats.draft')}</p>
                                     <p className="text-2xl font-bold text-gray-600">{stats.draft}</p>
                                 </div>
                                 <EyeOff className="h-8 w-8 text-gray-400" />
@@ -216,7 +218,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                         <Card>
                             <CardContent className="py-12 text-center text-gray-500">
                                 <Bell className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                                <p>Tiada pengumuman dijumpai</p>
+                                <p>{t('adminAnnouncements.noAnnouncements')}</p>
                             </CardContent>
                         </Card>
                     ) : (
@@ -236,7 +238,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                                     </Badge>
                                                 )}
                                                 <Badge className={announcement.published_at ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-gray-100 text-gray-800 hover:bg-gray-100"}>
-                                                    {announcement.published_at ? 'Diterbitkan' : 'Draf'}
+                                                    {announcement.published_at ? t('adminAnnouncements.published') : t('adminAnnouncements.draft')}
                                                 </Badge>
                                             </div>
 
@@ -276,7 +278,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                                 size="sm"
                                                 onClick={() => handleViewDetails(announcement)}
                                             >
-                                                Lihat
+                                                {t('adminAnnouncements.view')}
                                             </Button>
                                             <Button
                                                 variant="outline"
@@ -287,12 +289,12 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                                 {announcement.published_at ? (
                                                     <>
                                                         <EyeOff className="h-4 w-4 mr-1" />
-                                                        Nyahterbit
+                                                        {t('adminAnnouncements.unpublish')}
                                                     </>
                                                 ) : (
                                                     <>
                                                         <Eye className="h-4 w-4 mr-1" />
-                                                        Terbitkan
+                                                        {t('adminAnnouncements.publish')}
                                                     </>
                                                 )}
                                             </Button>
@@ -302,7 +304,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                                 onClick={() => handleEditClick(announcement)}
                                             >
                                                 <Edit className="h-4 w-4 mr-1" />
-                                                Edit
+                                                {t('adminAnnouncements.edit')}
                                             </Button>
                                             <Button
                                                 variant="outline"
@@ -311,7 +313,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                                 className="border-red-300 text-red-600 hover:bg-red-50"
                                             >
                                                 <Trash2 className="h-4 w-4 mr-1" />
-                                                Padam
+                                                {t('adminAnnouncements.delete')}
                                             </Button>
                                         </div>
                                     </div>
@@ -326,19 +328,19 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Cipta Pengumuman Baru</DialogTitle>
+                        <DialogTitle>{t('adminAnnouncements.form.createTitle')}</DialogTitle>
                         <DialogDescription>
-                            Cipta pengumuman untuk dipaparkan kepada petani
+                            {t('adminAnnouncements.form.createDescription')}
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleCreateSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="title">Tajuk *</Label>
+                            <Label htmlFor="title">{t('adminAnnouncements.form.title')}</Label>
                             <Input
                                 id="title"
                                 value={createData.title}
                                 onChange={(e) => setCreateData('title', e.target.value)}
-                                placeholder="Contoh: Workshop Kawalan Perosak"
+                                placeholder={t('adminAnnouncements.form.titlePlaceholder')}
                                 required
                             />
                             {createErrors.title && (
@@ -347,29 +349,29 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="category">Kategori (Pilihan)</Label>
+                            <Label htmlFor="category">{t('adminAnnouncements.form.category')}</Label>
                             <select
                                 id="category"
                                 value={createData.category}
                                 onChange={(e) => setCreateData('category', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                             >
-                                <option value="">Pilih kategori (pilihan)</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Program">Program</option>
-                                <option value="Berita">Berita</option>
-                                <option value="Amaran">Amaran</option>
-                                <option value="Lain-lain">Lain-lain</option>
+                                <option value="">{t('adminAnnouncements.form.selectCategory')}</option>
+                                <option value={t('adminAnnouncements.form.category.workshop')}>{t('adminAnnouncements.form.category.workshop')}</option>
+                                <option value={t('adminAnnouncements.form.category.program')}>{t('adminAnnouncements.form.category.program')}</option>
+                                <option value={t('adminAnnouncements.form.category.news')}>{t('adminAnnouncements.form.category.news')}</option>
+                                <option value={t('adminAnnouncements.form.category.warning')}>{t('adminAnnouncements.form.category.warning')}</option>
+                                <option value={t('adminAnnouncements.form.category.other')}>{t('adminAnnouncements.form.category.other')}</option>
                             </select>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="content">Kandungan *</Label>
+                            <Label htmlFor="content">{t('adminAnnouncements.form.content')}</Label>
                             <Textarea
                                 id="content"
                                 value={createData.content}
                                 onChange={(e) => setCreateData('content', e.target.value)}
-                                placeholder="Masukkan kandungan pengumuman..."
+                                placeholder={t('adminAnnouncements.form.contentPlaceholder')}
                                 rows={6}
                                 required
                             />
@@ -379,7 +381,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="image">Poster/Gambar (Pilihan)</Label>
+                            <Label htmlFor="image">{t('adminAnnouncements.form.image')}</Label>
                             <Input
                                 id="image"
                                 type="file"
@@ -390,7 +392,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                             {createErrors.image && (
                                 <p className="text-sm text-red-600">{createErrors.image}</p>
                             )}
-                            <p className="text-xs text-gray-500">Maksimum 5MB. Format: JPG, PNG, GIF</p>
+                            <p className="text-xs text-gray-500">{t('adminAnnouncements.form.imageFormat')}</p>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -402,7 +404,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                 className="rounded"
                             />
                             <Label htmlFor="publish_now" className="cursor-pointer">
-                                Terbitkan sekarang
+                                {t('adminAnnouncements.form.publishNow')}
                             </Label>
                         </div>
 
@@ -415,14 +417,14 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                     resetCreate();
                                 }}
                             >
-                                Batal
+                                {t('adminAnnouncements.form.cancel')}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={createProcessing}
                                 className="bg-green-600 hover:bg-green-700"
                             >
-                                {createProcessing ? 'Mencipta...' : 'Cipta Pengumuman'}
+                                {createProcessing ? t('adminAnnouncements.form.creating') : t('adminAnnouncements.form.create')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -433,14 +435,14 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Edit Pengumuman</DialogTitle>
+                        <DialogTitle>{t('adminAnnouncements.form.editTitle')}</DialogTitle>
                         <DialogDescription>
-                            Kemaskini butiran pengumuman
+                            {t('adminAnnouncements.form.editDescription')}
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleEditSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="edit-title">Tajuk *</Label>
+                            <Label htmlFor="edit-title">{t('adminAnnouncements.form.title')}</Label>
                             <Input
                                 id="edit-title"
                                 value={editData.title}
@@ -453,24 +455,24 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="edit-category">Kategori (Pilihan)</Label>
+                            <Label htmlFor="edit-category">{t('adminAnnouncements.form.category')}</Label>
                             <select
                                 id="edit-category"
                                 value={editData.category}
                                 onChange={(e) => setEditData('category', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                             >
-                                <option value="">Pilih kategori (pilihan)</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Program">Program</option>
-                                <option value="Berita">Berita</option>
-                                <option value="Amaran">Amaran</option>
-                                <option value="Lain-lain">Lain-lain</option>
+                                <option value="">{t('adminAnnouncements.form.selectCategory')}</option>
+                                <option value={t('adminAnnouncements.form.category.workshop')}>{t('adminAnnouncements.form.category.workshop')}</option>
+                                <option value={t('adminAnnouncements.form.category.program')}>{t('adminAnnouncements.form.category.program')}</option>
+                                <option value={t('adminAnnouncements.form.category.news')}>{t('adminAnnouncements.form.category.news')}</option>
+                                <option value={t('adminAnnouncements.form.category.warning')}>{t('adminAnnouncements.form.category.warning')}</option>
+                                <option value={t('adminAnnouncements.form.category.other')}>{t('adminAnnouncements.form.category.other')}</option>
                             </select>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="edit-content">Kandungan *</Label>
+                            <Label htmlFor="edit-content">{t('adminAnnouncements.form.content')}</Label>
                             <Textarea
                                 id="edit-content"
                                 value={editData.content}
@@ -485,7 +487,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
 
                         {selectedAnnouncement?.image && (
                             <div className="space-y-2">
-                                <Label>Gambar Semasa</Label>
+                                <Label>{t('adminAnnouncements.form.currentImage')}</Label>
                                 <img
                                     src={`/storage/${selectedAnnouncement.image}`}
                                     alt={selectedAnnouncement.title}
@@ -495,7 +497,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                         )}
 
                         <div className="space-y-2">
-                            <Label htmlFor="edit-image">Gambar Baru (Pilihan)</Label>
+                            <Label htmlFor="edit-image">{t('adminAnnouncements.form.newImage')}</Label>
                             <Input
                                 id="edit-image"
                                 type="file"
@@ -503,7 +505,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                 onChange={(e) => setEditData('image', e.target.files?.[0] || null)}
                                 className="cursor-pointer"
                             />
-                            <p className="text-xs text-gray-500">Maksimum 5MB</p>
+                            <p className="text-xs text-gray-500">{t('adminAnnouncements.form.imageMax')}</p>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -515,7 +517,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                 className="rounded"
                             />
                             <Label htmlFor="edit-publish_now" className="cursor-pointer">
-                                Terbitkan sekarang
+                                {t('adminAnnouncements.form.publishNow')}
                             </Label>
                         </div>
 
@@ -529,14 +531,14 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                                     setSelectedAnnouncement(null);
                                 }}
                             >
-                                Batal
+                                {t('adminAnnouncements.form.cancel')}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={editProcessing}
                                 className="bg-green-600 hover:bg-green-700"
                             >
-                                {editProcessing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                {editProcessing ? t('adminAnnouncements.form.saving') : t('adminAnnouncements.form.save')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -561,7 +563,7 @@ export default function AdminAnnouncements({ announcements, stats }: Props) {
                             <div className="flex items-center gap-4 text-sm text-gray-600">
                                 <div className="flex items-center gap-1">
                                     <User className="h-4 w-4" />
-                                    <span>Oleh: {selectedAnnouncement.user.name}</span>
+                                    <span>{t('adminAnnouncements.by')} {selectedAnnouncement.user.name}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <Calendar className="h-4 w-4" />

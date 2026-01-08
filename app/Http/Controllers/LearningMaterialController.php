@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\LearningMaterial;
-use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -22,16 +21,9 @@ class LearningMaterialController extends Controller
             ->filter()
             ->values();
 
-        // Also fetch quizzes for the Kuiz tab
-        $quizzes = Quiz::with(['questions', 'learningMaterial', 'creator'])
-            ->withCount('attempts')
-            ->latest()
-            ->get();
-
         return Inertia::render('admin/learning', [
             'materials' => $materials,
             'categories' => $categories,
-            'quizzes' => $quizzes,
         ]);
     }
 
@@ -41,10 +33,11 @@ class LearningMaterialController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'type' => 'required|in:pdf,video',
+            'type' => 'required|in:pdf,video,quiz',
             'category' => 'required|string|max:255',
             'file' => 'required_if:type,pdf|file|mimes:pdf|max:51200', // 50MB max for PDF
             'video_url' => 'required_if:type,video|url',
+            'quiz_url' => 'required_if:type,quiz|url',
             'thumbnail' => 'nullable|image|max:2048', // 2MB max for thumbnail
         ]);
 
@@ -65,6 +58,11 @@ class LearningMaterialController extends Controller
         // Handle YouTube video
         if ($validated['type'] === 'video') {
             $data['video_url'] = $validated['video_url'];
+        }
+
+        // Handle Quiz external link
+        if ($validated['type'] === 'quiz') {
+            $data['quiz_url'] = $validated['quiz_url'];
         }
 
         // Handle thumbnail upload
