@@ -1,13 +1,11 @@
 <?php
 
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use function Pest\Laravel\{actingAs, get, patch, delete};
 
-/** @var TestCase $this */
-uses(TestCase::class, RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
