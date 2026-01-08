@@ -20,7 +20,6 @@ export function AppSidebarHeader() {
                     className="h-10 w-10 rounded-full object-cover"
                 />
                 <div>
-                    <h1 className="font-bold text-xl">AgriPadi</h1>
                     <p className="text-xs text-green-100">Empowering Farmers Through Technology 🌾</p>
                 </div>
             </div>
