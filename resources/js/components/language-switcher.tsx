@@ -8,7 +8,7 @@ export function LanguageSwitcher() {
     // Load language preference from localStorage on mount
     useEffect(() => {
         const savedLanguage = localStorage.getItem('agripadi_language') as 'ms' | 'en' | null;
-        if (savedLanguage) {
+        if (savedLanguage && savedLanguage !== language) {
             setLanguage(savedLanguage);
             document.documentElement.lang = savedLanguage === 'ms' ? 'ms-MY' : 'en-US';
         }

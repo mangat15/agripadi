@@ -1309,7 +1309,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     // Load language preference from localStorage on mount
     useEffect(() => {
         const savedLanguage = localStorage.getItem('agripadi_language') as Language | null;
-        if (savedLanguage && (savedLanguage === 'ms' || savedLanguage === 'en')) {
+        if (
+            savedLanguage &&
+            (savedLanguage === 'ms' || savedLanguage === 'en') &&
+            savedLanguage !== language
+        ) {
             setLanguageState(savedLanguage);
             document.documentElement.lang = savedLanguage === 'ms' ? 'ms-MY' : 'en-US';
         }

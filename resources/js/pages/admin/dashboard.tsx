@@ -91,10 +91,9 @@ function formatRoleName(role: string, language: 'ms' | 'en'): string {
 
 export default function AdminDashboard() {
     const { systemStats, pendingReports, recentUsers } = usePage<AdminDashboardProps>().props;
-    const { t, language } = useLanguage();
+    const { t } = useLanguage();
 
     // Calculate total action items requiring attention
-    const totalActionItems = systemStats.pendingReports + systemStats.inReviewReports;
     const hasUrgentItems = systemStats.pendingReports > 0;
 
     return (
@@ -414,7 +413,7 @@ export default function AdminDashboard() {
                                                 </div>
                                                 <div className="flex items-center justify-between">
                                                     <p className="text-sm text-gray-600 font-medium">
-                                                        📍 {report.farmer} • {formatDate(report.date, language)}
+                                                        📍 {report.farmer} • {formatDate(report.date, 'ms')}
                                                     </p>
                                                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <ChevronRight className="h-5 w-5 text-gray-400" />
@@ -471,10 +470,10 @@ export default function AdminDashboard() {
                                                             variant="secondary"
                                                             className="text-xs font-semibold bg-purple-100 text-purple-800 border-purple-200"
                                                         >
-                                                            {t(formatRoleName(user.role, language))}
+                                                            {t(formatRoleName(user.role, 'ms'))}
                                                         </Badge>
                                                         <span className="text-sm text-gray-600 font-medium">
-                                                            {formatDate(user.date, language)}
+                                                            {formatDate(user.date, 'ms')}
                                                         </span>
                                                     </div>
                                                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
