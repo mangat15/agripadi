@@ -28,30 +28,38 @@ export default function Landing({ stats }: Props) {
                     </svg>
                 </div>
                 {/* Header/Navigation */}
-                <header className="bg-gradient-to-r from-green-100 via-emerald-50 to-green-100 shadow-md sticky top-0 z-50 backdrop-blur-sm">
-                    <div className="container mx-auto px-6 py-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                <header className="bg-gradient-to-r from-green-100 via-emerald-50 to-green-100 shadow-md sticky top-0 z-50 backdrop-blur-sm relative pb-2 sm:pb-0">
+                    <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+                        <div className="flex items-center justify-between flex-wrap sm:flex-nowrap gap-3">
+                            <div className="flex items-center gap-2 sm:gap-3">
                                 <img
                                     src="/logo1.png"
                                     alt="AgriPadi Logo"
-                                    className="h-14 w-14 rounded-full object-cover shadow-lg ring-2 ring-green-500"
+                                    className="h-12 w-12 sm:h-14 sm:w-14 rounded-full object-cover shadow-lg ring-2 ring-green-500"
                                 />
-                                <span className="text-xl font-bold text-gray-900">Empowering Farmers Through Technology 🌾</span>
+                                <span className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-900 leading-tight">
+                                    Empowering Farmers<br className="sm:hidden" /> Through Technology 🌾
+                                </span>
                             </div>
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 sm:gap-4">
                                 <Link href={login()}>
-                                    <Button variant="ghost" className="text-gray-700 hover:text-green-600 text-base px-6 py-2">
+                                    <Button variant="ghost" className="text-gray-700 hover:text-green-600 text-sm sm:text-base px-3 sm:px-6 py-2">
                                         Log Masuk
                                     </Button>
                                 </Link>
                                 <Link href={register()}>
-                                    <Button className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white text-base px-6 py-2 shadow-lg hover:shadow-xl transition-all">
+                                    <Button className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white text-sm sm:text-base px-3 sm:px-6 py-2 shadow-lg hover:shadow-xl transition-all">
                                         Daftar
                                     </Button>
                                 </Link>
                             </div>
                         </div>
+                    </div>
+                    {/* Curved bottom edge - only on mobile */}
+                    <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none sm:hidden">
+                        <svg className="relative block w-full h-3" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                            <path d="M0,0 C300,80 900,80 1200,0 L1200,120 L0,120 Z" className="fill-white"></path>
+                        </svg>
                     </div>
                 </header>
 

@@ -1,0 +1,48 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Laravel
+/vendor
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+
+# Build artifacts
+/public/build
+/public/hot
+/public/storage
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Testing
+/coverage
+.phpunit.cache
+
+# Logs
+*.log
+storage/logs/*
+
+# Cache
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# Temporary files
+*.tmp
+*.cache
