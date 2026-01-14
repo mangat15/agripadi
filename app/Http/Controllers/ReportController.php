@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
+use App\Models\ReportResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +14,7 @@ class ReportController extends Controller
     public function farmerIndex(Request $request)
     {
         $reports = Report::where('user_id', $request->user()->user_id)
+            ->with('responses.admin')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -138,7 +140,7 @@ class ReportController extends Controller
     // Admin: View single report detail
     public function show(Report $report)
     {
-        $report->load('user');
+        $report->load(['user', 'responses.admin']);
 
         return Inertia::render('admin/report-detail', [
             'report' => $report
@@ -174,5 +176,37 @@ class ReportController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Status berjaya dikemaskini');
+    }
+
+    // Admin: Add response to report (new time log system)
+    public function addResponse(Request $request, Report $report)
+    {
+        $validated = $request->validate([
+            'response' => 'required|string',
+            'response_type' => 'required|in:update,resolved',
+        ]);
+
+        // Create the response record
+        ReportResponse::create([
+            'report_id' => $report->id,
+            'admin_id' => $request->user()->user_id,
+            'response' => $validated['response'],
+            'response_type' => $validated['response_type'],
+        ]);
+
+        // Update report status based on response type
+        if ($validated['response_type'] === 'resolved') {
+            $report->update([
+                'status' => 'resolved',
+                'responded_at' => now(),
+            ]);
+        } else {
+            $report->update([
+                'status' => 'under_review',
+                'responded_at' => now(),
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Maklum balas berjaya ditambah');
     }
 }

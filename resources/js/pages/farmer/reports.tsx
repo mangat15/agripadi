@@ -17,6 +17,19 @@ import { FileText, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import { useForm, router } from '@inertiajs/react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+interface ReportResponse {
+    id: number;
+    report_id: number;
+    admin_id: number;
+    response: string;
+    response_type: 'update' | 'resolved';
+    created_at: string;
+    admin: {
+        name: string;
+        email: string;
+    };
+}
+
 interface Report {
     id: number;
     title: string;
@@ -30,6 +43,7 @@ interface Report {
     responded_at: string | null;
     created_at: string;
     updated_at: string;
+    responses?: ReportResponse[];
 }
 
 interface Props {
@@ -207,24 +221,14 @@ export default function FarmerReports({ reports }: Props) {
                                 <CardContent>
                                     <p className="text-gray-700 mb-4 line-clamp-2">{report.description}</p>
 
-                                    {report.admin_response && (
+                                    {report.responses && report.responses.length > 0 && (
                                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                                            <div className="flex items-start gap-2">
-                                                <div className="bg-blue-500 text-white rounded-full p-1">
-                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
-                                                </div>
-                                                <div className="flex-1">
-                                                    <p className="text-sm font-semibold text-blue-900">{t('reports.adminResponse')}</p>
-                                                    <p className="text-sm text-blue-800 mt-1">{report.admin_response}</p>
-                                                    {report.responded_at && (
-                                                        <p className="text-xs text-blue-600 mt-1">
-                                                            {t('reports.respondedOn')} {formatDate(report.responded_at)}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
+                                            <p className="text-sm font-semibold text-blue-900 mb-2">
+                                                {report.responses.length} maklum balas dari pegawai pertanian
+                                            </p>
+                                            <p className="text-xs text-blue-600">
+                                                Terkini: {formatDate(report.responses[report.responses.length - 1].created_at)}
+                                            </p>
                                         </div>
                                     )}
 
@@ -519,7 +523,7 @@ export default function FarmerReports({ reports }: Props) {
 
             {/* View Report Dialog */}
             <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-                <DialogContent className="max-w-3xl">
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Detail Laporan</DialogTitle>
                     </DialogHeader>
@@ -577,15 +581,48 @@ export default function FarmerReports({ reports }: Props) {
                                 </div>
                             )}
 
-                            {selectedReport.admin_response && (
-                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                    <p className="text-sm font-semibold text-blue-900">Maklum Balas dari Pegawai Pertanian:</p>
-                                    <p className="text-blue-800 mt-2">{selectedReport.admin_response}</p>
-                                    {selectedReport.responded_at && (
-                                        <p className="text-xs text-blue-600 mt-2">
-                                            Dijawab pada {formatDate(selectedReport.responded_at)}
-                                        </p>
-                                    )}
+                            {selectedReport.responses && selectedReport.responses.length > 0 && (
+                                <div>
+                                    <p className="text-sm font-semibold text-gray-900 mb-4">{t('reports.adminResponse')}:</p>
+                                    <div className="relative border-l-2 border-gray-200 pl-6 space-y-6">
+                                        {selectedReport.responses.map((response, index) => (
+                                            <div key={response.id} className="relative">
+                                                <div className={`absolute -left-[1.6875rem] w-5 h-5 rounded-full border-2 border-white ${
+                                                    response.response_type === 'resolved'
+                                                        ? 'bg-green-500'
+                                                        : 'bg-blue-500'
+                                                }`}></div>
+                                                <div className={`p-4 rounded-lg ${
+                                                    response.response_type === 'resolved'
+                                                        ? 'bg-green-50 border border-green-200'
+                                                        : 'bg-blue-50 border border-blue-200'
+                                                }`}>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className={`text-xs font-semibold px-2 py-1 rounded ${
+                                                            response.response_type === 'resolved'
+                                                                ? 'bg-green-100 text-green-800'
+                                                                : 'bg-blue-100 text-blue-800'
+                                                        }`}>
+                                                            {response.response_type === 'resolved' ? t('reports.status.resolved') : t('adminReportDetail.responseType.update')}
+                                                        </span>
+                                                        <span className="text-xs text-gray-600">
+                                                            {formatDate(response.created_at)}
+                                                        </span>
+                                                    </div>
+                                                    <p className={`text-sm ${
+                                                        response.response_type === 'resolved'
+                                                            ? 'text-green-800'
+                                                            : 'text-blue-800'
+                                                    }`}>
+                                                        {response.response}
+                                                    </p>
+                                                    <p className="text-xs text-gray-600 mt-2">
+                                                        {t('adminReportDetail.respondedBy')} {response.admin.name}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>

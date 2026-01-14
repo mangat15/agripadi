@@ -418,7 +418,7 @@ export default function AdminLearningMaterial({ materials, categories }: Props) 
 
             {/* Create Dialog */}
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>{t('adminLearning.form.title')}</DialogTitle>
                         <DialogDescription>{t('adminLearning.form.description')}</DialogDescription>

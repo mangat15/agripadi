@@ -183,6 +183,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports', [ReportController::class, 'adminIndex'])->name('reports');
         Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
         Route::post('/reports/{report}/respond', [ReportController::class, 'respond'])->name('reports.respond');
+        Route::post('/reports/{report}/add-response', [ReportController::class, 'addResponse'])->name('reports.add-response');
         Route::put('/reports/{report}/status', [ReportController::class, 'updateStatus'])->name('reports.status');
 
         Route::get('/forum', [ForumController::class, 'adminIndex'])->name('forum');
