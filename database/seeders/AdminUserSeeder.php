@@ -21,6 +21,7 @@ class AdminUserSeeder extends Seeder
                 'email' => 'admin@gmail.com',
                 'password' => Hash::make('123456789'),
                 'role' => 1,
+                'phone' => '0123456789',
                 'email_verified_at' => now(),
             ]
         );
@@ -33,6 +34,7 @@ class AdminUserSeeder extends Seeder
                 'email' => 'farmer@gmail.com',
                 'password' => Hash::make('123456789'),
                 'role' => 0,
+                'phone' => '0198765432',
                 'email_verified_at' => now(),
             ]
         );
