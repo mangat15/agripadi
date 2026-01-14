@@ -235,7 +235,7 @@ export default function AdminReportDetail({ report }: Props) {
 
                                     {/* Timeline */}
                                     <div className="space-y-4">
-                                        {report.responses.map((response, index) => (
+                                        {report.responses.map((response) => (
                                             <div key={response.id} className="relative pl-6 pb-4 border-l-2 border-gray-200 last:border-l-0 last:pb-0">
                                                 {/* Timeline dot */}
                                                 <div className={`absolute left-[-9px] top-0 w-4 h-4 rounded-full ${response.response_type === 'resolved' ? 'bg-green-500' : 'bg-blue-500'}`}></div>

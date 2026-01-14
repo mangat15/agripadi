@@ -585,7 +585,7 @@ export default function FarmerReports({ reports }: Props) {
                                 <div>
                                     <p className="text-sm font-semibold text-gray-900 mb-4">{t('reports.adminResponse')}:</p>
                                     <div className="relative border-l-2 border-gray-200 pl-6 space-y-6">
-                                        {selectedReport.responses.map((response, index) => (
+                                        {selectedReport.responses.map((response) => (
                                             <div key={response.id} className="relative">
                                                 <div className={`absolute -left-[1.6875rem] w-5 h-5 rounded-full border-2 border-white ${
                                                     response.response_type === 'resolved'
