@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('learning_materials', function (Blueprint $table) {
-            $table->dropColumn('thumbnail');
-        });
+        // Only drop if column exists (for existing databases)
+        if (Schema::hasColumn('learning_materials', 'thumbnail')) {
+            Schema::table('learning_materials', function (Blueprint $table) {
+                $table->dropColumn('thumbnail');
+            });
+        }
     }
 
     /**
